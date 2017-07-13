@@ -12,7 +12,7 @@ int main ()
     while ( aptmainloop() ) //Detects the input for the A button.
 {
       hidscaninput();
-      kDown == hidKeysDown(); //Detects is the A button was pressed.
+      kDown == hidKeysDown(); //Detects if the A button was pressed.
       if (kDown == KEY_A)
 {
         consoleClear();
