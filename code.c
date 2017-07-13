@@ -5,7 +5,7 @@
 
 int main ()
 {
-  gfxInit(GSP_RGB565_OES, GSP_BGR888_OES, false); //Inits the top screen
+  gfxInit(GSP_RGB565_OES, GSP_BGR888_OES, false); //Inits both screens.
   printf ( "Welcome to RTChanger! \n" );
   printf ( "Using this program, you can manually change the Raw RTC. \n" );
   printf ( "The Raw RTC is your hidden System Clock. Editing this allows you to bypass timegates. \n" );
