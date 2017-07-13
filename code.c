@@ -32,13 +32,6 @@ if (kDown & KEY_A);
 {
         consoleClear(); //Clears the screen of text.
         printf ( "Please change the time below. It does not match your current time you see on the Home Menu, this is normal. Change the time by however much you need necessary, changing the time backwards is not recommended." ); //Text shown at the second screen.
-  {
-      hidscaninput();
-if (kDown == KEY_DUP);
-if (kDown == KEY_DDOWN);
-if (kDown == KEY_DRIGHT);
-if (kDown == KEY_DLEFT);
-   }
   } 
       gfxFlushBuffers();
       gfxSwapBuffers();
