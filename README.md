@@ -56,7 +56,7 @@ A: I don't honestly see the point of updating this once it's released. Unless a 
 
 # Contact Information
 
-I'm currently most active on Reddit. If you need something urgent, or would like to ask a few questions, please contact me on reddit. /u/x-the-komujin is the name.
+I'm currently most active on Reddit. If you need something urgent, or would like to ask a few questions, please contact me on Reddit. /u/x-the-komujin is the name.
 
 # Credits (thus far)
 
