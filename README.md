@@ -44,3 +44,5 @@ A: I don't honestly see the point of updating this once it's released. Unless a 
 Sono (AKA MarcusD). I would not have even started this project if it weren't for him. I am very new to coding and he has and currently is helping me with this project. A very, very helpful person.
 
 The 3DSHacks #dev community on Discord. I had quite a few questions to ask there.
+
+Smealum for ctrulib. I really needed that library.
