@@ -25,7 +25,7 @@ int main ()
     printf ("Press A to continue or START to return to the Home Menu. \n \n \n \n");
     printf ("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
     while (aptmainloop()) //Detects the input for the A button.
-     {    
+    {    
          hidscaninput();
          kDown = hidKeysDown(); //Detects if the A button was pressed.
          kHeld = hidKeysHeld(); //Detects if the A button was held.
@@ -40,7 +40,7 @@ int main ()
          gfxFlushBuffers();
          gfxSwapBuffers();
          gspWaitForVBlank();
-     }
+    }
     gfxExit();
     return 0;
 }
