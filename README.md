@@ -1,6 +1,6 @@
 # RTChanger
 
-RTChanger is a WIP homebrew application for the Nintendo 3DS system. RTChanger will allow you to change the Raw RTC of your system.
+RTChanger is a WIP homebrew application for the Nintendo 3DS system. RTChanger will allow you to change the Raw RTC of your system. This will be the only legally distributable open sourced Raw RTC changer!
 Changing the Raw RTC allows you to bypass most timegates in games. For example, you can do Poke Pelago activities much faster in Pokemon Sun or Pokemon Moon. 
 
 There are many applications in different games as some games have more than one time gate.
