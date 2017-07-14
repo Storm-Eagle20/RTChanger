@@ -45,12 +45,18 @@ A: Yes!
 
 # Q: Will this be shared on GBATemp?
 
-A: I plan on it. I hope to release this to as many people as I can.
+A: I plan on it. I hope to release this to as many people as I can. I genuinely hope RTChanger will catch on in the community.
 
 
 # Q: Will there be any updates to this?
 
 A: I don't honestly see the point of updating this once it's released. Unless a critical bug arises, there's really nothing else to be done with this application in particular.
+
+---
+
+# Contact Information
+
+I'm currently most active on Reddit. If you need something urgent, or would like to ask a few questions, please contact me on reddit. /u/x-the-komujin is the name.
 
 # Credits (thus far)
 
