@@ -24,14 +24,14 @@ int main ()
     gfxInit(GSP_RGB565_OES, GSP_BGR888_OES, false); //Inits both screens.
     PrintConsole console;
     consoleInit(GFX_TOP, &console);
-    printf ("Welcome to RTChanger! \n"); //Notifications to user after booting RTChanger.
+    printf ("Welcome to RTChanger! \n");            //Notifications to user after booting RTChanger.
     printf ("Using this program, you can manually change the Raw RTC. \n");
     printf ("The Raw RTC is your hidden System Clock. Editing this allows you to bypass timegates. \n");
     printf ("More information can be found at my GitHub. \n"); 
     printf ("I highly recommend you view the README if you haven't already. \n \n");
     printf ("Press A to continue or START to return to the Home Menu. \n \n \n \n");
     printf ("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
-    while (aptmainloop()) //Detects the input for the A button.
+    while (aptmainloop())                           //Detects the input for the A button.
     {    
          hidscaninput();
          kDown = hidKeysDown();        //Detects if the A button was pressed.
