@@ -43,9 +43,9 @@ int main ()
         
          if(kHeld & KEY_START) break;  //User can choose to continue or return to the Home Menu.  
         
-         if(kDown & (KEY_UP));
+         if(kDown & (KEY_UP));         //Detects if the UP D-PAD button was pressed.
          {    
-             buf[offs]++
+             buf[offs]++ //Makes an offset increasing the original value by one.
              switch(offs)
              {
                 case 0: //seconds
@@ -65,9 +65,9 @@ int main ()
                     break;
              }       
          }
-         if(kDown & (KEY_DOWN));
+         if(kDown & (KEY_DOWN));       //Detects if the UP D-PAD button was pressed.
          {    
-             buf[offs]--
+             buf[offs]-- //Makes an offset decreasing the original value by one.
              switch(offs)
              {
                  case 0: //seconds
