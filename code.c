@@ -45,46 +45,49 @@ int main ()
         
          if(kDown & (KEY_UP));
          {    
-              switch(offs)
-              {
+             buf[offs]++
+             switch(offs)
+             {
+                case 0: //seconds
+                case 1: //minutes
+                    break;
+                    
+                case 2: //hours
+                    break;
+                    
+                case 4: //days
+                    break;
+                     
+                case 5: //months
+                    break;
+                    
+                case 6: //years
+                    break;
+             }       
+         }
+         if(kDown & (KEY_UP));
+         {    
+             buf[offs]--
+             switch(offs)
+             {
                  case 0: //seconds
                  case 1: //minutes
                      break;
-                    
+                     
                  case 2: //hours
                      break;
-                    
+                     
                  case 4: //days
                      break;
                      
                  case 5: //months
                      break;
-                    
+                     
                  case 6: //years
                      break;
-              }       
+             }
          }
-         if(kDown & (KEY_UP));
-         {    
-              switch(offs)
-              {
-                  case 0: //seconds
-                  case 1: //minutes
-                      break;
-                     
-                  case 2: //hours
-                      break;
-                     
-                  case 4: //days
-                      break;
-                     
-                  case 5: //months
-                      break;
-                     
-                  case 6: //years
-                      break;
-              }
-         }
+        
          if(kDown & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT))
          {
              bcdfix(buf + offs);
