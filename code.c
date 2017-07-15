@@ -47,23 +47,45 @@ int main ()
          {
              bcdfix(buf + offs);
              printf("20%08X/%08X/%08X %08X:%08X:%08X\r", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
-             switch(offs)
+             if(kDown & (KEY_UP));
              {
-                case 0: //seconds
-                case 1: //minutes
-                    break;
+                switch(offs)
+                {
+                    case 0: //seconds
+                    case 1: //minutes
+                        break;
                      
-                case 2: //hours
-                    break;
+                    case 2: //hours
+                        break;
                      
-                case 4: //days
-                    break;
+                    case 4: //days
+                        break;
                      
-                case 5: //months
-                    break;
+                    case 5: //months
+                        break;
                      
-                case 6: //years
-                    break;
+                    case 6: //years
+                        break;
+             }
+             if(kDown & (KEY_UP));
+             {
+                 switch(offs)
+                 {
+                    case 0: //seconds
+                    case 1: //minutes
+                        break;
+                    
+                    case 2: //hours
+                        break;
+                    
+                    case 4: //days
+                        break;
+                     
+                    case 5: //months
+                        break;
+                    
+                    case 6: //years
+                        break;
              }
          }
         
