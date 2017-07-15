@@ -31,8 +31,8 @@ int main ()
     printf ("I highly recommend you view the README if you haven't already. \n \n");
     printf ("Press A to continue or START to return to the Home Menu. \n \n \n \n");
     printf ("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
-    RTC time;
-    u8* buf = &time;
+    RTC rtctime;
+    u8* buf = &rtctime;
     u8 offs = 0;
     while (aptmainloop())                           //Detects the input for the A button.
     {    
