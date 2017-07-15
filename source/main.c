@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <3ds.h>
+#include "mcu.h"
 
 typedef struct  
 {
