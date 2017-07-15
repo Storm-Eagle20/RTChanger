@@ -43,50 +43,50 @@ int main ()
         
          if(kHeld & KEY_START) break;  //User can choose to continue or return to the Home Menu.  
         
+         if(kDown & (KEY_UP));
+         {
+             switch(offs)
+             {
+                case 0: //seconds
+                case 1: //minutes
+                    break;
+                    
+                case 2: //hours
+                    break;
+                    
+                case 4: //days
+                    break;
+                     
+                case 5: //months
+                    break;
+                    
+                case 6: //years
+                    break;
+         }
+         if(kDown & (KEY_UP));
+         {
+            switch(offs)
+            {
+                case 0: //seconds
+                case 1: //minutes
+                    break;
+                     
+                case 2: //hours
+                    break;
+                     
+                case 4: //days
+                    break;
+                     
+                case 5: //months
+                    break;
+                     
+                case 6: //years
+                    break;
+         }
          if(kDown & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT))
          {
              bcdfix(buf + offs);
              printf("20%08X/%08X/%08X %08X:%08X:%08X\r", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
-             if(kDown & (KEY_UP));
-             {
-                switch(offs)
-                {
-                    case 0: //seconds
-                    case 1: //minutes
-                        break;
-                     
-                    case 2: //hours
-                        break;
-                     
-                    case 4: //days
-                        break;
-                     
-                    case 5: //months
-                        break;
-                     
-                    case 6: //years
-                        break;
-             }
-             if(kDown & (KEY_UP));
-             {
-                 switch(offs)
-                 {
-                    case 0: //seconds
-                    case 1: //minutes
-                        break;
-                    
-                    case 2: //hours
-                        break;
-                    
-                    case 4: //days
-                        break;
-                     
-                    case 5: //months
-                        break;
-                    
-                    case 6: //years
-                        break;
-             }
          }
         
          if (kDown & KEY_A);
