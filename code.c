@@ -31,6 +31,9 @@ int main ()
     printf ("I highly recommend you view the README if you haven't already. \n \n");
     printf ("Press A to continue or START to return to the Home Menu. \n \n \n \n");
     printf ("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
+    RCT time;
+    u8* buf = &time;
+    u8 offs = 0;
     while (aptmainloop())                           //Detects the input for the A button.
     {    
          hidscaninput();
@@ -44,6 +47,7 @@ int main ()
              printf ("Please change the time below. It does not match your current time you see on the Home Menu, this is normal. /n"); //Text shown at the second screen.
              printf ("Change the time by however much you need necessary, \x1b[31mchanging the time backwards is not recommended.\x1b[0m"); 
          } 
+         printf("20%08X/%08X/%08X %08X:%08X:%08X\n", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
          gfxFlushBuffers();
          gfxSwapBuffers();
          gspWaitForVBlank();
