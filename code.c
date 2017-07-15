@@ -65,7 +65,7 @@ int main ()
                     break;
              }       
          }
-         if(kDown & (KEY_UP));
+         if(kDown & (KEY_DOWN));
          {    
              buf[offs]--
              switch(offs)
