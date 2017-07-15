@@ -34,9 +34,9 @@ int main ()
     while (aptmainloop()) //Detects the input for the A button.
     {    
          hidscaninput();
-         kDown = hidKeysDown(); //Detects if the A button was pressed.
-         kHeld = hidKeysHeld(); //Detects if the A button was held.
-         kUp = hidKeysUp();   //Detects if the A button was just released.
+         kDown = hidKeysDown();        //Detects if the A button was pressed.
+         kHeld = hidKeysHeld();        //Detects if the A button was held.
+         kUp = hidKeysUp();            //Detects if the A button was just released.
          if (kHeld & KEY_START) break; // User can choose to continue or return to the Home Menu.  
          if (kDown & KEY_A);
          {
