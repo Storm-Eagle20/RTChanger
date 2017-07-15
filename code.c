@@ -44,44 +44,46 @@ int main ()
          if(kHeld & KEY_START) break;  //User can choose to continue or return to the Home Menu.  
         
          if(kDown & (KEY_UP));
-         {
-             switch(offs)
-             {
-                case 0: //seconds
-                case 1: //minutes
-                    break;
+         {    
+              switch(offs)
+              {
+                 case 0: //seconds
+                 case 1: //minutes
+                     break;
                     
-                case 2: //hours
-                    break;
+                 case 2: //hours
+                     break;
                     
-                case 4: //days
-                    break;
+                 case 4: //days
+                     break;
                      
-                case 5: //months
-                    break;
+                 case 5: //months
+                     break;
                     
-                case 6: //years
-                    break;
+                 case 6: //years
+                     break;
+              }       
          }
          if(kDown & (KEY_UP));
-         {
-            switch(offs)
-            {
-                case 0: //seconds
-                case 1: //minutes
-                    break;
+         {    
+              switch(offs)
+              {
+                  case 0: //seconds
+                  case 1: //minutes
+                      break;
                      
-                case 2: //hours
-                    break;
+                  case 2: //hours
+                      break;
                      
-                case 4: //days
-                    break;
+                  case 4: //days
+                      break;
                      
-                case 5: //months
-                    break;
+                  case 5: //months
+                      break;
                      
-                case 6: //years
-                    break;
+                  case 6: //years
+                      break;
+              }
          }
          if(kDown & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT))
          {
