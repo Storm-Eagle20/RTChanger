@@ -47,6 +47,21 @@ int main ()
          {
              bcdfix(buf + offs);
              printf("20%08X/%08X/%08X %08X:%08X:%08X\r", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
+             switch(grade) {
+                 case 'hours' :
+                    break;
+                 case 'minutes' :
+                    break;
+                 case 'seconds' :
+                    break;
+                 case 'month' :
+                    break;
+                 case 'days' :
+                    break;
+                 case 'year' :
+                    break;
+                 default :
+                    printf("The time hasn't changed!" );
          }
         
          if (kDown & KEY_A);
