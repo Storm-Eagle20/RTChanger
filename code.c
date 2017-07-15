@@ -23,8 +23,8 @@ int main ()
 {
     gfxInit(GSP_RGB565_OES, GSP_BGR888_OES, false); //Inits both screens.
     PrintConsole topScreen, bottomScreen;
-    consoleInit(GFX_TOP, &console);
-    consoleInit(GFX_BOTTOM, &console);
+    consoleInit(GFX_TOP, &topScreen);
+    consoleInit(GFX_BOTTOM, &bottomScreen);
     consoleSelect(&bottomScreen);
     printf ("Welcome to RTChanger! \n");            //Notifications to user after booting RTChanger.
     printf ("Using this program, you can manually change the Raw RTC. \n");
