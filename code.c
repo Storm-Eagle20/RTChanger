@@ -22,15 +22,18 @@ void bcdfix(u8* wat)
 int main ()
 {
     gfxInit(GSP_RGB565_OES, GSP_BGR888_OES, false); //Inits both screens.
-    PrintConsole console;
+    PrintConsole topScreen, bottomScreen;
     consoleInit(GFX_TOP, &console);
+    consoleInit(GFX_BOTTOM, &console);
+    consoleSelect(&bottomScreen);
     printf ("Welcome to RTChanger! \n");            //Notifications to user after booting RTChanger.
     printf ("Using this program, you can manually change the Raw RTC. \n");
     printf ("The Raw RTC is your hidden System Clock. Editing this allows you to bypass timegates. \n");
     printf ("More information can be found at my GitHub. \n"); 
     printf ("I highly recommend you view the README if you haven't already. \n \n");
-    printf ("Press A to continue or START to return to the Home Menu. \n \n \n \n");
+    printf ("Please change your time or START to return to the Home Menu. \n \n \n \n");
     printf ("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
+    consoleSelect(&topScreen);
     RTC rtctime;
     u8* buf = &rtctime;
     u8 offs = 0;
@@ -42,6 +45,9 @@ int main ()
          kUp = hidKeysUp();            //Detects if the A button was just released.
         
          if(kHeld & KEY_START) break;  //User can choose to continue or return to the Home Menu.  
+        
+         printf("Here you can change your time. Changing backwards is not recommended.");
+         printf("Change your time by however you may need.");
         
          if(kDown & (KEY_UP));         //Detects if the UP D-PAD button was pressed.
          {    
@@ -92,13 +98,6 @@ int main ()
          {
              bcdfix(buf + offs);
              printf("20%08X/%08X/%08X %08X:%08X:%08X\r", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
-         }
-        
-         if (kDown & KEY_A);
-         {
-             consoleClear(); //Clears the screen of text.
-             printf ("Please change the time below. It does not match your current time you see on the Home Menu, this is normal. /n"); //Text shown at the second screen.
-             printf ("Change the time by however much you need necessary, \x1b[31mchanging the time backwards is not recommended.\x1b[0m"); 
          }
         
          gfxFlushBuffers();
