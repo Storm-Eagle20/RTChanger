@@ -40,18 +40,26 @@ int main ()
          kDown = hidKeysDown();        //Detects if the A button was pressed.
          kHeld = hidKeysHeld();        //Detects if the A button was held.
          kUp = hidKeysUp();            //Detects if the A button was just released.
-         if (kHeld & KEY_START) break; //User can choose to continue or return to the Home Menu.  
+        
+         if(kHeld & KEY_START) break; //User can choose to continue or return to the Home Menu.  
+        
+         if(kDown & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT))
+         {
+             bcdfix(buf + offs);
+             printf("20%08X/%08X/%08X %08X:%08X:%08X\r", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
+         }
+        
          if (kDown & KEY_A);
          {
              consoleClear(); //Clears the screen of text.
              printf ("Please change the time below. It does not match your current time you see on the Home Menu, this is normal. /n"); //Text shown at the second screen.
              printf ("Change the time by however much you need necessary, \x1b[31mchanging the time backwards is not recommended.\x1b[0m"); 
-         } 
+         }
+        
          gfxFlushBuffers();
          gfxSwapBuffers();
          gspWaitForVBlank();
     }
-    printf("20%08X/%08X/%08X %08X:%08X:%08X\n", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
     gfxExit();
     return 0;
 }
