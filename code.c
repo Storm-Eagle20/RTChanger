@@ -37,7 +37,7 @@ int main ()
          kDown = hidKeysDown();        //Detects if the A button was pressed.
          kHeld = hidKeysHeld();        //Detects if the A button was held.
          kUp = hidKeysUp();            //Detects if the A button was just released.
-         if (kHeld & KEY_START) break; // User can choose to continue or return to the Home Menu.  
+         if (kHeld & KEY_START) break; //User can choose to continue or return to the Home Menu.  
          if (kDown & KEY_A);
          {
              consoleClear(); //Clears the screen of text.
