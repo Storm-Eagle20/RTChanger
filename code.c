@@ -52,12 +52,16 @@ int main ()
                 case 0: //seconds
                 case 1: //minutes
                     break;
+                     
                 case 2: //hours
                     break;
+                     
                 case 4: //days
                     break;
+                     
                 case 5: //months
                     break;
+                     
                 case 6: //years
                     break;
              }
