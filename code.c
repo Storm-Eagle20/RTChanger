@@ -39,7 +39,7 @@ int main ()
     u8 offs = 0;
     while (aptmainloop())                           //Detects the input for the A button.
     {    
-         hidscaninput();
+         hidScanInput();
          kDown = hidKeysDown();        //Detects if the A button was pressed.
          kHeld = hidKeysHeld();        //Detects if the A button was held.
          kUp = hidKeysUp();            //Detects if the A button was just released.
