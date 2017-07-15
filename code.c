@@ -47,11 +47,11 @@ int main ()
              printf ("Please change the time below. It does not match your current time you see on the Home Menu, this is normal. /n"); //Text shown at the second screen.
              printf ("Change the time by however much you need necessary, \x1b[31mchanging the time backwards is not recommended.\x1b[0m"); 
          } 
-         printf("20%08X/%08X/%08X %08X:%08X:%08X\n", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
          gfxFlushBuffers();
          gfxSwapBuffers();
          gspWaitForVBlank();
     }
+    printf("20%08X/%08X/%08X %08X:%08X:%08X\n", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
     gfxExit();
     return 0;
 }
