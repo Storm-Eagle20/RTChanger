@@ -46,8 +46,8 @@ int main ()
         printf("Failed to init MCU: %08X\n", res);
         puts("This .3DSX was likely opened without Luma3DS or a SM patch.");
         puts("\x1b[30;41mYou cannot use this application without Luma3DS and Boot9Strap.\x1b[0m");
-        puts("If you have Luma3DS 8.0 and up, just ignore the above message and patch SM. Restart the application afterwards.");
-        puts("If you are confused, please visit my GitHub and view the README.\n \n \n");
+        puts("If you have Luma3DS 8.0 and up, just    ignore the above message and patch SM.  Restart the application afterwards.");
+        puts("If you are confused, please visit my    GitHub and view the README.\n \n \n");
         puts("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
         hangmacro();
     }
