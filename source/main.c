@@ -35,9 +35,9 @@ int main ()
     printf ("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
     consoleSelect(&topScreen);
     RTC rtctime;
-	u32 kDown = 0;
-	u32 kHeld = 0;
-	u32 kUp = 0;
+    u32 kDown = 0;
+    u32 kHeld = 0;
+    u32 kUp = 0;
     u8* buf = &rtctime;
     u8 offs = 0;
     while (aptMainLoop())                           //Detects the input for the A button.
