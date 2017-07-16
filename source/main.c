@@ -26,18 +26,20 @@ int main ()
     consoleInit(GFX_TOP, &topScreen);
     consoleInit(GFX_BOTTOM, &bottomScreen);
     consoleSelect(&bottomScreen);
-    printf ("Welcome to RTChanger! \n");            //Notifications to user after booting RTChanger.
-    printf ("Using this program, you can manually change the Raw RTC. \n");
-    printf ("The Raw RTC is your hidden System Clock. Editing this allows you to bypass timegates. \n");
-    printf ("More information can be found at my GitHub. \n"); 
-    printf ("I highly recommend you view the README if you haven't already. \n \n");
-    printf ("Please change your time or START to return to the Home Menu. \n \n \n \n");
-    printf ("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
+    puts ("Welcome to RTChanger! \n");            //Notifications to user after booting RTChanger.
+    puts ("Using this program, you can manually change the Raw RTC.");
+    puts ("The Raw RTC is your hidden System Clock. Editing this allows you to bypass timegates.");
+    puts ("More information can be found at my GitHub."); 
+    puts ("I highly recommend you view the README if you haven't already.");
+    puts ("Please change your time or START to return to the Home Menu. \n \n \n");
+    puts ("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
     consoleSelect(&topScreen);
+    puts("Here you can change your time. Changing backwards is not recommended.");
+    puts("Change your time by however you may need.");
     RTC rtctime;
-    u32 kDown = 0;
-    u32 kHeld = 0;
-    u32 kUp = 0;
+	u32 kDown = 0;
+	u32 kHeld = 0;
+	u32 kUp = 0;
     u8* buf = &rtctime;
     u8 offs = 0;
     while (aptMainLoop())                           //Detects the input for the A button.
@@ -48,9 +50,6 @@ int main ()
         kUp = hidKeysUp();            //Detects if the A button was just released.
         
         if(kHeld & KEY_START) break;  //User can choose to continue or return to the Home Menu.  
-        
-        printf("Here you can change your time. Changing backwards is not recommended.");
-        printf("Change your time by however you may need.");
         
         if(kDown & (KEY_UP))          //Detects if the UP D-PAD button was pressed.
         {    
