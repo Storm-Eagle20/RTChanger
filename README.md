@@ -26,19 +26,29 @@ As the Raw RTC was a value stored in the MCU, very few developers knew how to wo
 
 Q: What is required for this?
 
-A: This is a .CIA file and requires Custom Firmware and Boot9Strap. The preferred CFW is Luma3DS, but you can choose one at your own descretion. .CIA files are installed with FBI, as you should have gotten it installed in www.3ds.guide. 
+A: This will be a .CIA and .3DSX file and requires Custom Firmware and Boot9Strap. The .3DSX also requires Luma3DS as it needs Rosalina to patch the Service Manager (SM) module. The preferred CFW is Luma3DS, but you can choose one at your own descretion. .CIA files are installed with FBI, as you should have gotten it installed in www.3ds.guide. 
+
+# You must patch Service Manager to use the .3DSX version.
+
+Open Rosalina, go to `Process patches menu`, and select `Patch SM for service checks.` You CANNOT use RTChanger without doing this first.
+
+.3DSX files are used with an entrypoint. The recommended entrypoint is the HBLoader. You can get it in the link below. Do NOT attempt to launch RTChanger through an entrypoint which was entered by switching the hb. title using Rosalina. RTChanger will crash if you do that.
+
+While you can use any entrypoint you like, here is the release page for the HBLauncher_Loader .CIA, which will allow you to access userland if you don't have access to any other entrypoint.
+
+https://github.com/yellows8/hblauncher_loader/releases
 
 ---
 
-Q: Will there be a .3DSX version?
+Q: Will there be a GodMode9 script?
 
-A: I will consider making one, but be aware that Rosalina (and therefore Luma3DS) will still be required due to the escalated permissions needed.
+A: I have reached out to d0k3, however it is his decision as to whether he wishes to implement RTC scripting on GodMode9. As of writing this I have not received a response as to whether he'll do anything. I can attempt to port RTChanger to GodMode9 when the project is finished, however there is no guarantees this can be ported and I am not going to disturb him more than once on this issue.
 
 ---
 
 Q: This involves the MCU. Is this safe?
 
-A: Yes. What you may have heard was that changing the color of the LED can brick the MCU, but even then that was only for firmware versions below 8.0.0. You're safe to use this application.
+A: Yes. What you may have heard was that changing the color of the LED can brick the MCU, but even then that was only for firmware versions below 8.0.0. And you had to do soldering to replace the LED as well before you could. You're safe to use this application because the MCU firmware for your unit can handle this application.
 
 ---
 
@@ -72,6 +82,6 @@ I'm currently most active on Reddit. If you need something urgent, or would like
 
 Sono (AKA MarcusD). I would not have even started this project if it weren't for him. I am very new to coding and he has and currently is helping me with this project. A very, very helpful person.
 
-The 3DSHacks #dev community on Discord. I had quite a few questions to ask there.
+The 3DSHacks #dev community on Discord. I had quite a few questions to ask there. I also desperately needed new Makefiles to create .CIA and .3DSX files.
 
 Smealum for ctrulib. I really needed that library.
