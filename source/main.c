@@ -16,21 +16,150 @@
     }\
 })
 
+#define UNITS_AMOUNT 7
+
+enum {
+    SECONDS_OFFSET = 0,
+    MINUTES_OFFSET,
+    HOURS_OFFSET,
+    UNUSED_OFFSET,
+    DAY_OFFSET,
+    MONTH_OFFSET,
+    YEAR_OFFSET
+};
+
 typedef struct  
 {
     u8 seconds;
     u8 minute;
     u8 hour;
-    u8 something;
+    u8 something; //Unused value.
     u8 day;
     u8 month;
     u8 year;   
 } RTC;
 
+const int offsNext[] = {
+    1,
+    2,
+    6,
+    0, //Unused offset.
+    0,
+    4,
+    5
+};
+
+const int offsPrevious[] = {
+    4,
+    0,
+    1,
+    0, //Unused offset.
+    5,
+    6,
+    2
+};
+
+const int cursorOffset[] = {
+    19,
+    16,
+    13,
+    0, //Unused offset.
+    2,
+    5,
+    10
+};
+
+u8 maxValue[] = {
+    60,
+    60,
+    24,
+    0, //Unused offset.
+    32,
+    13,
+    100
+};
+
+const u8 minValue[] = {
+    0,
+    0,
+    0,
+    0, //Unused offset.
+    1,
+    1,
+    0
+};
+
+void setMaxDayValue(RTC rtctime)
+{
+    int year = rtctime.year+2000;
+    int maxDayValue = 30;
+    
+    //30, 31, 30 gets shifted after august
+    maxDayValue += (rtctime.month % 2) ^ (rtctime.month >= 8);
+    
+    //leap years and february
+    if(rtctime.month == 2)
+    {
+        maxDayValue -= 2;
+        if (year % 4 == 0)
+        {
+            if (year % 100 == 0)
+            {
+                if (year % 400 == 0) maxDayValue++;
+            }
+            else maxDayValue++;
+        }
+    }
+    
+    maxValue[DAY_OFFSET] = maxDayValue+1;
+}
+
+void handleOverflow(RTC * rtctime)
+{
+    u8 * bufs = (u8*)rtctime;
+    for(int i = 0; i < UNITS_AMOUNT; i++)
+    {
+        if(bufs[i] >= maxValue[i] && i+1 < UNITS_AMOUNT)
+        {
+            if(i == UNUSED_OFFSET) continue;
+            bufs[i] = minValue[i];
+            int offset = 1;
+            if (i+offset == UNUSED_OFFSET) offset++;
+            bufs[i+offset]++;
+        }
+            
+    }
+}
+
+void changeRTCValue(RTC * rtctime, int offset, int change)
+{
+    u8 * bufs = (u8*)rtctime;
+    bufs[offset] += change;
+    if(bufs[offset] < minValue[offset] || bufs[offset] > maxValue[offset])
+        bufs[offset] = maxValue[offset]-1;
+
 void bcdfix(u8* wat)
 {
     if((*wat & 0xF) == 0xF) *wat -= 6;
     if((*wat & 0xF) == 0xA) *wat += 6;
+}
+
+void BCDtoByte(u8 * BCD, u8 * Byte)
+{
+   for (int i = 0; i < UNITS_AMOUNT; i++)
+    {
+        Byte[i] = (BCD[i] & 0xF) + (10 * (BCD[i] >> 4));
+    }
+}
+
+void ByteToBCD(u8 * Byte, u8 * BCD)
+{
+    for (int i = 0; i < UNITS_AMOUNT; i++)
+    {
+        int units = Byte[i] % 10;
+        int tens = (Byte[i] - units)/10;
+        BCD[i] = (tens << 4 | units);
+    }
 }
 
 int main ()
@@ -53,7 +182,7 @@ int main ()
     }
     puts ("Welcome to RTChanger! \n");            //Notifications to user after booting RTChanger.
     puts ("Using this program, you can manually    change the Raw RTC."); //Extra spaces between words so that the screen doesn't separate them.
-    puts ("The Raw RTC is your hidden System Clock.Editing this allows you to bypass      timegates.");
+    puts ("The Raw RTC is your hidden System Clock.Editing this allows you to bypass       timegates.");
     puts ("More information can be found at my     GitHub."); 
     puts ("I highly recommend you view the README  if you haven't already.");
     puts ("Please change your time or START to     return to the Home Menu. \n \n \n");
