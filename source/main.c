@@ -2,6 +2,20 @@
 #include <3ds.h>
 #include "mcu.h"
 
+#define hangmacro() \
+({\
+    puts("Press a key to exit...");\
+    while(aptMainLoop())\
+    {\
+        hidScanInput();\
+        if(hidKeysDown())\
+        {\
+            goto killswitch;\
+        }\
+        gspWaitForVBlank();\
+    }\
+})
+
 typedef struct  
 {
     u8 seconds;
@@ -26,6 +40,12 @@ int main ()
     consoleInit(GFX_TOP, &topScreen);
     consoleInit(GFX_BOTTOM, &bottomScreen);
     consoleSelect(&bottomScreen);
+    Result res = mcuInit();
+    if(res < 0)
+    {
+        printf("Failed to init MCU: %08X\n");
+        hangmacro();
+    }
     puts ("Welcome to RTChanger! \n");            //Notifications to user after booting RTChanger.
     puts ("Using this program, you can manually change the Raw RTC.");
     puts ("The Raw RTC is your hidden System Clock. Editing this allows you to bypass timegates.");
@@ -37,9 +57,9 @@ int main ()
     puts("Here you can change your time. Changing backwards is not recommended.");
     puts("Change your time by however you may need. \n");
     RTC rtctime;
-	u32 kDown = 0;
-	u32 kHeld = 0;
-	u32 kUp = 0;
+    u32 kDown = 0;
+    u32 kHeld = 0;
+    u32 kUp = 0;
     u8* buf = &rtctime;
     u8 offs = 0;
     while (aptMainLoop())                           //Detects the input for the A button.
@@ -116,6 +136,10 @@ int main ()
         gfxSwapBuffers();
         gspWaitForVBlank();
     }
+    killswitch:
+    
+    mcuExit();
     gfxExit();
+    
     return 0;
 }
