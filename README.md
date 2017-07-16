@@ -26,7 +26,7 @@ As the Raw RTC was a value stored in the MCU, very few developers knew how to wo
 
 Q: What is required for this?
 
-A: This will be a .CIA and .3DSX file and requires Custom Firmware and Boot9Strap. The .3DSX also requires Luma3DS as it needs Rosalina to patch the Service Manager (SM) module. The preferred CFW is Luma3DS, but you can choose one at your own descretion. .CIA files are installed with FBI, as you should have gotten it installed in www.3ds.guide. 
+A: This will be a .CIA and .3DSX file and requires Custom Firmware and Boot9Strap. The .3DSX also requires Luma3DS as it needs Rosalina to patch the Service Manager (SM) module. The preferred CFW for the .CIA is Luma3DS, but you can choose one at your own descretion. .CIA files are installed with FBI, as you should have gotten it installed in www.3ds.guide. 
 
 # You must patch Service Manager to use the .3DSX version.
 
