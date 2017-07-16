@@ -51,7 +51,7 @@ int main ()
     puts ("The Raw RTC is your hidden System Clock. Editing this allows you to bypass      timegates.");
     puts ("More information can be found at my     GitHub."); 
     puts ("I highly recommend you view the README  if you haven't already.");
-    puts ("Please change your time or START to return     to the Home Menu. \n \n \n");
+    puts ("Please change your time or START to     return to the Home Menu. \n \n \n");
     puts ("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
     consoleSelect(&topScreen);
     puts("Here you can change your time. Changing backwards is not recommended.");
