@@ -35,7 +35,7 @@ A: This will be a .CIA and .3DSX file and requires Custom Firmware and Boot9Stra
 
 Open Rosalina, go to `Process patches menu`, and select `Patch SM for service checks.` You CANNOT use the .3DSX version of RTChanger without doing this first. The .CIA version doesn't require this, however.
 
-While you can use any entrypoint you like, here is the release page for the HBLauncher_Loader .CIA, which will allow you to access userland if you don't have access to any other entrypoint.
+While you can use any entrypoint you like, here is the release page for the HBLauncher_Loader .CIA, which will allow you to access userland to boot up the .3DSX if you don't have access to any other entrypoint.
 
 https://github.com/yellows8/hblauncher_loader/releases
 
