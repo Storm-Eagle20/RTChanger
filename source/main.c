@@ -35,11 +35,11 @@ int main ()
     puts ("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
     consoleSelect(&topScreen);
     puts("Here you can change your time. Changing backwards is not recommended.");
-    puts("Change your time by however you may need.");
+    puts("Change your time by however you may need. \n");
     RTC rtctime;
-    u32 kDown = 0;
-    u32 kHeld = 0;
-    u32 kUp = 0;
+	u32 kDown = 0;
+	u32 kHeld = 0;
+	u32 kUp = 0;
     u8* buf = &rtctime;
     u8 offs = 0;
     while (aptMainLoop())                           //Detects the input for the A button.
@@ -94,6 +94,16 @@ int main ()
                 case 6: //years
                     break;
             }
+        }
+        if(kDown & KEY_LEFT)
+        {
+            if(offs == 2) offs = 4;
+            else if(offs < 6) offs++;
+        }
+        if(kDown & KEY_RIGHT)
+        {
+            if(offs == 4) offs = 2;
+            else if(offs) offs--;
         }
         
         if(kDown & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT))
