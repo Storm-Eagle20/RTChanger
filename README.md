@@ -28,11 +28,12 @@ Q: What is required for this?
 
 A: This will be a .CIA and .3DSX file and requires Custom Firmware and Boot9Strap. The .3DSX also requires Luma3DS as it needs Rosalina to patch the Service Manager (SM) module. The preferred CFW for the .CIA is Luma3DS, but you can choose one at your own descretion. .CIA files are installed with FBI, as you should have gotten it installed in www.3ds.guide. 
 
+
+.3DSX files are used with an entrypoint. The recommended entrypoint is the HBLoader. You can get it in the link below. Do NOT attempt to launch RTChanger through an entrypoint which was entered by switching the hb. title using Rosalina. RTChanger will crash if you do that.
+
 # You must patch Service Manager to use the .3DSX version.
 
 Open Rosalina, go to `Process patches menu`, and select `Patch SM for service checks.` You CANNOT use the .3DSX version of RTChanger without doing this first. The .CIA version doesn't require this, however.
-
-.3DSX files are used with an entrypoint. The recommended entrypoint is the HBLoader. You can get it in the link below. Do NOT attempt to launch RTChanger through an entrypoint which was entered by switching the hb. title using Rosalina. RTChanger will crash if you do that.
 
 While you can use any entrypoint you like, here is the release page for the HBLauncher_Loader .CIA, which will allow you to access userland if you don't have access to any other entrypoint.
 
