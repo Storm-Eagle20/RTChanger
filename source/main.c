@@ -37,9 +37,9 @@ int main ()
     puts("Here you can change your time. Changing backwards is not recommended.");
     puts("Change your time by however you may need.");
     RTC rtctime;
-    u32 kDown = 0;
-    u32 kHeld = 0;
-    u32 kUp = 0;
+	u32 kDown = 0;
+	u32 kHeld = 0;
+	u32 kUp = 0;
     u8* buf = &rtctime;
     u8 offs = 0;
     while (aptMainLoop())                           //Detects the input for the A button.
@@ -99,7 +99,7 @@ int main ()
         if(kDown & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT))
         {
             bcdfix(buf + offs);
-            printf("20%08X/%08X/%08X %08X:%08X:%08X\r", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
+            printf("20%02X/%02X/%02X %02X:%02X:%02X\r", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
         }
         
         gfxFlushBuffers();
