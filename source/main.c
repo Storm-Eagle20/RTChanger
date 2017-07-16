@@ -35,77 +35,77 @@ int main ()
     printf ("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
     consoleSelect(&topScreen);
     RTC rtctime;
-    u32 kDown = 0;
-    u32 kHeld = 0;
-    u32 kUp = 0;
+	u32 kDown = 0;
+	u32 kHeld = 0;
+	u32 kUp = 0;
     u8* buf = &rtctime;
     u8 offs = 0;
     while (aptMainLoop())                           //Detects the input for the A button.
-    {    
-         hidScanInput();
-         kDown = hidKeysDown();        //Detects if the A button was pressed.
-         kHeld = hidKeysHeld();        //Detects if the A button was held.
-         kUp = hidKeysUp();            //Detects if the A button was just released.
+    {   
+        hidScanInput();
+        kDown = hidKeysDown();        //Detects if the A button was pressed.
+        kHeld = hidKeysHeld();        //Detects if the A button was held.
+        kUp = hidKeysUp();            //Detects if the A button was just released.
         
-         if(kHeld & KEY_START) break;  //User can choose to continue or return to the Home Menu.  
+        if(kHeld & KEY_START) break;  //User can choose to continue or return to the Home Menu.  
         
-         printf("Here you can change your time. Changing backwards is not recommended.");
-         printf("Change your time by however you may need.");
+        printf("Here you can change your time. Changing backwards is not recommended.");
+        printf("Change your time by however you may need.");
         
-         if(kDown & (KEY_UP))          //Detects if the UP D-PAD button was pressed.
-         {    
-             buf[offs]++ //Makes an offset increasing the original value by one.
-             switch(offs)
-             {   
-                 case 0: //seconds
-                 case 1: //minutes
-                     break;
+        if(kDown & (KEY_UP))          //Detects if the UP D-PAD button was pressed.
+        {    
+            buf[offs]++ //Makes an offset increasing the original value by one.
+            switch(offs)
+            {   
+                case 0: //seconds
+                case 1: //minutes
+                    break;
                     
-                 case 2: //hours
-                     break;
+                case 2: //hours
+                    break;
                     
-                 case 4: //days
-                     break;
-                     
-                 case 5: //months
-                     break;
+                case 4: //days
+                    break;
                     
-                 case 6: //years
-                     break;
-             }       
-         }
-         if(kDown & (KEY_DOWN))        //Detects if the UP D-PAD button was pressed.
-         {    
-             buf[offs]-- //Makes an offset decreasing the original value by one.
-             switch(offs)
-             {
-                 case 0: //seconds
-                 case 1: //minutes
-                     break;
-                     
-                 case 2: //hours
-                     break;
-                     
-                 case 4: //days
-                     break;
-                     
-                 case 5: //months
-                     break;
-                     
-                 case 6: //years
-                     break;
-             }
-         }
+                case 5: //months
+                    break;
+                    
+                case 6: //years
+                    break;
+            }       
+        }
+        if(kDown & (KEY_DOWN))        //Detects if the UP D-PAD button was pressed.
+        {    
+            buf[offs]-- //Makes an offset decreasing the original value by one.
+            switch(offs)
+            {
+                case 0: //seconds
+                case 1: //minutes
+                    break;
+                    
+                case 2: //hours
+                    break;
+                    
+                case 4: //days
+                    break;
+                    
+                case 5: //months
+                    break;
+                    
+                case 6: //years
+                    break;
+            }
+        }
         
-         if(kDown & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT))
-         {
-             bcdfix(buf + offs);
-             printf("20%08X/%08X/%08X %08X:%08X:%08X\r", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
-         }
+        if(kDown & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT))
+        {
+            bcdfix(buf + offs);
+            printf("20%08X/%08X/%08X %08X:%08X:%08X\r", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
+        }
         
-         gfxFlushBuffers();
-         gfxSwapBuffers();
-         gspWaitForVBlank();
+        gfxFlushBuffers();
+        gfxSwapBuffers();
+        gspWaitForVBlank();
     }
     gfxExit();
     return 0;
