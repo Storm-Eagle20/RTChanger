@@ -6,7 +6,7 @@ There are many applications in different games as some games have more than one 
 
 # Timegates?
 
-Let's take Pokemon Sun and Moon for an example. You want to train your Pokemon in Poke Pelago. That can take two days or more. Then you want to grow berries which can take days. You also want to do the daily lottery in Festival Plaza, too. Imagine with RTChanger, you no longer have to wait. That is now a reality, and RTChanger can manually change your time ahead by any value you want. Almost every timegate in 3DS games will ge gone and you'll be able to rapidly train your Pokemon, grow thousands of berries within an hour, and get tons of stuff by the lottery.
+Let's take Pokemon Sun and Moon for an example. You want to train your Pokemon in Poke Pelago. That can take two days or more. Then you want to grow berries which can take days. You also want to do the daily lottery in Festival Plaza, too. Imagine with a new homebrew application, you no longer have to wait. That is now a reality, and RTChanger can manually change your time ahead by any value you want. Almost every timegate in 3DS games will ge gone and you'll be able to rapidly train your Pokemon, grow thousands of berries within an hour, and get tons of stuff by the lottery.
 
 Please note that there are some timegates which RTChanger will not be capable of bypassing. Some timegates are server based, meaning the server keeps the time on their end, and RTChanger cannot bypass these as it's client-side only and there is no possibility of server-based timegate bypassing.
 
@@ -83,7 +83,7 @@ I'm currently most active on Reddit. If you need something urgent, or would like
 
 Sono (AKA MarcusD). I would not have even started this project if it weren't for him. I am very new to coding and he has and currently is helping me with this project. A very, very helpful person.
 
-LiquidFenrir on Discord. I'm not joking when I say that he seriously assisted me in the entirety of my code around the binary coded decimals, which I was completely unfamiliar with. I would have taken weeks to get that code done without him.
+LiquidFenrir on Discord. I'm not joking when I say that he seriously assisted me in the entirety of my code around the binary coded decimals, which I was completely unfamiliar with. It would have taken weeks to get that code done without him.
 
 The 3DSHacks #dev community on Discord. I had quite a few questions to ask there. I also desperately needed new Makefiles to create .CIA and .3DSX files.
 
