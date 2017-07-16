@@ -37,9 +37,9 @@ int main ()
     puts("Here you can change your time. Changing backwards is not recommended.");
     puts("Change your time by however you may need.");
     RTC rtctime;
-	u32 kDown = 0;
-	u32 kHeld = 0;
-	u32 kUp = 0;
+    u32 kDown = 0;
+    u32 kHeld = 0;
+    u32 kUp = 0;
     u8* buf = &rtctime;
     u8 offs = 0;
     while (aptMainLoop())                           //Detects the input for the A button.
