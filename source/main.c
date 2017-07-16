@@ -48,7 +48,7 @@ int main ()
     }
     puts ("Welcome to RTChanger! \n");            //Notifications to user after booting RTChanger.
     puts ("Using this program, you can manually    change the Raw RTC."); //Extra spaces between words so that the screen doesn't separate them.
-    puts ("The Raw RTC is your hidden System Clock. Editing this allows you to bypass      timegates.");
+    puts ("The Raw RTC is your hidden System Clock.Editing this allows you to bypass      timegates.");
     puts ("More information can be found at my     GitHub."); 
     puts ("I highly recommend you view the README  if you haven't already.");
     puts ("Please change your time or START to     return to the Home Menu. \n \n \n");
