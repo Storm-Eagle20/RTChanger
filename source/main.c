@@ -137,7 +137,7 @@ void changeRTCValue(RTC * rtctime, int offset, int change)
     bufs[offset] += change;
     if(bufs[offset] < minValue[offset] || bufs[offset] > maxValue[offset])
         bufs[offset] = maxValue[offset]-1;
-
+}
 void bcdfix(u8* wat)
 {
     if((*wat & 0xF) == 0xF) *wat -= 6;
