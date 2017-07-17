@@ -59,7 +59,7 @@ const int offsPrevious[] = {
     2
 };
 
-const int cursorOffset[] = {
+const int cursorOffset[] = { //Supposed to set a cursor below the highlighted number. Doesn't work currently.
     19,
     16,
     13,
@@ -69,7 +69,7 @@ const int cursorOffset[] = {
     10
 };
 
-u8 maxValue[] = {
+u8 maxValue[] = { //Supposed to set the maximum value. Doesn't work properly.
     60,
     60,
     24,
@@ -79,7 +79,7 @@ u8 maxValue[] = {
     100
 };
 
-const u8 minValue[] = {
+const u8 minValue[] = { //Supposed to set the minimum value. Doesn't work properly.
     0,
     0,
     0,
@@ -114,7 +114,7 @@ void setMaxDayValue(RTC rtctime)
     maxValue[DAY_OFFSET] = maxDayValue+1;
 }
 
-void handleOverflow(RTC * rtctime)
+void handleOverflow(RTC * rtctime) //Handles overflows to presumably prevent users from going above 59 seconds as an example.
 {
     u8 * bufs = (u8*)rtctime;
     for(int i = 0; i < UNITS_AMOUNT; i++)
