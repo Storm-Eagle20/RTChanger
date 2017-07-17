@@ -180,7 +180,7 @@ int main ()
         puts("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
         hangmacro();
     }
-    puts ("Welcome to RTChanger! \n");            //Notifications to user after booting RTChanger.
+    puts ("Welcome to RTChanger! \n");                                    //Notifications to user after booting RTChanger.
     puts ("Using this program, you can manually    change the Raw RTC."); //Extra spaces between words so that the screen doesn't separate them.
     puts ("The Raw RTC is your hidden System Clock.Editing this allows you to bypass       timegates.");
     puts ("As you may see, this Raw RTC is         different from the System Clock you have set.");
@@ -205,17 +205,17 @@ int main ()
         printf ("\x1b[0;0H");
         puts ("Here you can change your time. Changing backwards is not recommended.");
         puts ("Change your time by however you may need.");
-        puts ("The format is year, month, day then hours,       minutes, and seconds.");
+        puts ("The format is year, month, day, then hours,        minutes, and seconds.");
         puts ("When you are done setting the Raw RTC, press A to save the changes. \n");
         
-        hidScanInput();
+        hidScanInput();               //Scans for input.
         kDown = hidKeysDown();        //Detects if the A button was pressed.
         kHeld = hidKeysHeld();        //Detects if the A button was held.
         kUp = hidKeysUp();            //Detects if the A button was just released.
         
         if(kHeld & KEY_START) break;  //User can choose to continue or return to the Home Menu.  
         
-        else if(kDown & (KEY_UP))     //Detects if the UP D-PAD button was pressed.
+        if(kDown & (KEY_UP))     //Detects if the UP D-PAD button was pressed.
         {    
             buf[offs]++; //Makes an offset increasing the original value by one.
             switch(offs)
@@ -237,7 +237,7 @@ int main ()
                     break;
             }       
         }
-        else if(kDown & (KEY_DOWN))    //Detects if the UP D-PAD button was pressed.
+        if(kDown & (KEY_DOWN))    //Detects if the UP D-PAD button was pressed.
         {    
             buf[offs]--; //Makes an offset decreasing the original value by one.
             switch(offs)
@@ -259,23 +259,23 @@ int main ()
                     break;
             }
         }
-        else if(kDown & KEY_LEFT)
+        if(kDown & KEY_LEFT)
         {
             if(offs == 2) offs = 4;
             else if(offs < 6) offs++;
         }
-        else if(kDown & KEY_RIGHT)
+        if(kDown & KEY_RIGHT)
         {
             if(offs == 4) offs = 2;
             else if(offs) offs--;
         }
         
-        else if(kDown & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT))
+        if(kDown & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT))
         {
             bcdfix(buf + offs);
             printf("20%02X/%02X/%02X %02X:%02X:%02X\r", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
         }
-        else if(kDown & KEY_A)
+        if(kDown & KEY_A)
         {
             ByteToBCD((u8*)&rtctime, bcdRTC);
             mcuWriteRegister(0x30, bcdRTC, UNITS_AMOUNT);
