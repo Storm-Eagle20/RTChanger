@@ -18,16 +18,6 @@
 
 #define UNITS_AMOUNT 7
 
-enum {
-    SECONDS_OFFSET = 0,
-    MINUTES_OFFSET,
-    HOURS_OFFSET,
-    UNUSED_OFFSET,
-    DAY_OFFSET,
-    MONTH_OFFSET,
-    YEAR_OFFSET
-};
-
 typedef struct  
 {
     u8 seconds;
@@ -39,127 +29,10 @@ typedef struct
     u8 year;   
 } RTC;
 
-const int offsNext[] = {
-    1,
-    2,
-    6,
-    0, //Unused offset.
-    0,
-    4,
-    5
-};
-
-const int offsPrevious[] = {
-    4,
-    0,
-    1,
-    0, //Unused offset.
-    5,
-    6,
-    2
-};
-
-const int cursorOffset[] = { //Supposed to set a cursor below the highlighted number. Doesn't work currently.
-    19,
-    16,
-    13,
-    0, //Unused offset.
-    2,
-    5,
-    10
-};
-
-u8 maxValue[] = { //Supposed to set the maximum value. Doesn't work properly.
-    60,
-    60,
-    24,
-    0, //Unused offset.
-    32,
-    13,
-    100
-};
-
-const u8 minValue[] = { //Supposed to set the minimum value. Doesn't work properly.
-    0,
-    0,
-    0,
-    0, //Unused offset.
-    1,
-    1,
-    0
-};
-
-void setMaxDayValue(RTC rtctime)
-{
-    int year = rtctime.year+2000;
-    int maxDayValue = 30;
-    
-    //30, 31, 30 gets shifted after august
-    maxDayValue += (rtctime.month % 2) ^ (rtctime.month >= 8);
-    
-    //leap years and february
-    if(rtctime.month == 2)
-    {
-        maxDayValue -= 2;
-        if (year % 4 == 0)
-        {
-            if (year % 100 == 0)
-            {
-                if (year % 400 == 0) maxDayValue++;
-            }
-            else maxDayValue++;
-        }
-    }
-    
-    maxValue[DAY_OFFSET] = maxDayValue+1;
-}
-
-void handleOverflow(RTC * rtctime) //Handles overflows to presumably prevent users from going above 59 seconds as an example.
-{
-    u8 * bufs = (u8*)rtctime;
-    for(int i = 0; i < UNITS_AMOUNT; i++)
-    {
-        if(bufs[i] >= maxValue[i] && i+1 < UNITS_AMOUNT)
-        {
-            if(i == UNUSED_OFFSET) continue;
-            bufs[i] = minValue[i];
-            int offset = 1;
-            if (i+offset == UNUSED_OFFSET) offset++;
-            bufs[i+offset]++;
-        }
-            
-    }
-}
-
-void changeRTCValue(RTC * rtctime, int offset, int change)
-{
-    u8 * bufs = (u8*)rtctime;
-    bufs[offset] += change;
-    if(bufs[offset] < minValue[offset] || bufs[offset] > maxValue[offset])
-        bufs[offset] = maxValue[offset]-1;
-}
 void bcdfix(u8* wat)
 {
     if((*wat & 0xF) == 0xF) *wat -= 6;
     if((*wat & 0xF) == 0xA) *wat += 6;
-}
-
-void BCDtoByte(u8 * BCD, u8 * Byte)
-{
-   for (int i = 0; i < UNITS_AMOUNT; i++)
-    {
-        Byte[i] = (BCD[i] & 0xF) + (10 * (BCD[i] >> 4));
-    }
-}
-
-void ByteToBCD(u8 * Byte, u8 * BCD)
-{
-    for (int i = 0; i < UNITS_AMOUNT; i++)
-    {
-        int units = Byte[i] % 10;
-        int tens = (Byte[i] - units)/10;
-        BCD[i] = (tens << 4 | units);
-    }
 }
 
 int main ()
@@ -190,8 +63,8 @@ int main ()
     puts ("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
     consoleSelect(&topScreen);
     
-    u8 bcdRTC[UNITS_AMOUNT] = {0};
-    mcuReadRegister(0x30, bcdRTC, UNITS_AMOUNT);
+    RTC mcurtc;
+    mcuReadRegister(0x30, &mcurtc, 7);
     RTC rtctime;
     
     u32 kDown = 0;
@@ -277,8 +150,6 @@ int main ()
         }
         if(kDown & KEY_A)
         {
-            ByteToBCD((u8*)&rtctime, bcdRTC);
-            mcuWriteRegister(0x30, bcdRTC, UNITS_AMOUNT);
         }
         
         setMaxDayValue(rtctime);
