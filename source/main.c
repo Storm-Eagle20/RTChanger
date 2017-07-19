@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <3ds.h>
+#include <string.h>
 #include "mcu.h"
 
 #define hangmacro() \
@@ -16,8 +17,6 @@
     }\
 })
 
-#define UNITS_AMOUNT 7
-
 typedef struct  
 {
     u8 seconds;
@@ -28,6 +27,16 @@ typedef struct
     u8 month;
     u8 year;   
 } RTC;
+
+const int cursorOffset[] = { //Sets a cursor below the selected value.
+     19,
+     16,
+     13,
+     0, //Unused offset.
+     10,
+     7,
+     3
+ };
 
 void bcdfix(u8* wat)
 {
@@ -146,15 +155,12 @@ int main ()
         if(kDown & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT))
         {
             bcdfix(buf + offs);
-            printf("20%02X/%02X/%02X %02X:%02X:%02X\r", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
+            printf("20%02X/%02X/%02X %02X:%02X:%02X\n", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
+            printf("%*s\e[0K", cursorOffset[offs], "^^");
         }
         if(kDown & KEY_A)
         {
         }
-        
-        setMaxDayValue(rtctime);
-        handleOverflow(&rtctime);
-        setMaxDayValue(rtctime);
         
         gfxFlushBuffers();
         gfxSwapBuffers();
