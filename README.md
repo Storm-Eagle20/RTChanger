@@ -49,7 +49,7 @@ A: I have reached out to d0k3, however it is his decision as to whether he wishe
 
 Q: This involves the MCU. Is this safe?
 
-A: Yes. What you may have heard was that changing the color of the LED can brick the MCU, but even then that was only for firmware versions below 8.0.0. And you had to do soldering to replace the LED as well before you could. You're safe to use this application because the MCU firmware for your unit can handle this application.
+A: Yes. What you may have heard was that changing the color of the LED can brick the MCU, but that was not true as the brick yellows8 got was a NAND brick.
 
 ---
 
