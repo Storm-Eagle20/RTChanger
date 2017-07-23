@@ -89,6 +89,8 @@ I am not responsible for any bans or any ingame punishment of any sort from the 
 >7.  Disable the “Show friends what you’re playing” option
 >8.  Exit your Friend’s List
 
+Credits to Plailect (/u/Plailect), owner of www.3ds.guide. 
+
 # Contact Information
 
 I'm currently most active on Reddit. If you need something urgent, or would like to ask a few questions, please contact me on Reddit. /u/x-the-komujin is the name.
