@@ -77,7 +77,7 @@ A: I don't honestly see the point of updating this once it's released. Unless a 
 
 # Disclaimer
 
-I am not responsible for any bans or any ingame punishment of any sort from the use of RTChanger. You are highly unlikely to get any sort of ban, but there have been ban waves before. Quoting Plailect from his guide (if you have installed CFW recently you should already have this done):
+I am not responsible for any bans or any ingame punishment of any sort from the use of RTChanger. You are highly unlikely to get any sort of ban, but there have been ban waves before. The .3DSX version has no risk of being banned despite taking longer to boot up than the .CIA, however I still take no responsibility for any ingame punishmint or the like. Quoting Plailect from his guide (if you have installed CFW recently you should already have this done):
 
 >There have been reports of a wave of bans being handed out to CFW users by Nintendo. To protect yourself, please do the following steps before starting this guide:
 >1.  Go to System Settings, then “Internet Settings”, then “SpotPass”, then “Sending of System Information”
