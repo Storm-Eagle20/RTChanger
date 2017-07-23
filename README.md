@@ -31,7 +31,7 @@ A: This will be a .CIA and .3DSX file and requires Custom Firmware and Boot9Stra
 
 .3DSX files are used with an entrypoint. The recommended entrypoint is the HBLoader. You can get it in the link below. Do NOT attempt to launch RTChanger through an entrypoint which was entered by switching the hb. title using Rosalina. RTChanger will crash if you do that.
 
-# You must patch Service Manager to use the .3DSX version.
+# **You must patch Service Manager to use the .3DSX version.**
 
 Open Rosalina, go to `Process patches menu`, and select `Patch SM for service checks.` You CANNOT use the .3DSX version of RTChanger without doing this first. The .CIA version doesn't require this, however.
 
