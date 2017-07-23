@@ -61,7 +61,7 @@ A: Sadly, yes.
 
 Q: Is this legally redistributable?
 
-A: Yes!
+A: Yes! Feel free to share it to friends, but I recommend you send them to the GitHub first.
 
 ---
 
@@ -74,6 +74,20 @@ A: I plan on it. I hope to release this to as many people as I can. I genuinely 
 Q: Will there be any updates to this?
 
 A: I don't honestly see the point of updating this once it's released. Unless a critical bug arises, there's really nothing else to be done with this application in particular.
+
+# Disclaimer
+
+I am not responsible for any bans or any ingame punishment of any sort from the use of RTChanger. You are highly unlikely to get any sort of ban, but there have been ban waves before. Quoting Plailect from his guide (if you have installed CFW recently you should already have this done):
+
+>There have been reports of a wave of bans being handed out to CFW users by Nintendo. To protect yourself, please do the following steps before starting this guide:
+1.  Go to System Settings, then “Internet Settings”, then “SpotPass”, then “Sending of System Information”
+2.  Disable the “Sending of System Information” option
+3.  Exit the System Settings
+4.  Go to your Friend’s List (the Face Icon in the top row of your Home Menu)
+      * If you receive an error and are kicked out of the menu, the Friend’s List setting is already disabled
+6.  Go to the Friend’s List settings, then “Friend Notification Settings”, then “Show friends what you’re playing”
+7.  Disable the “Show friends what you’re playing” option
+8.  Exit your Friend’s List
 
 # Contact Information
 
