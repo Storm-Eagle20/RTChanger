@@ -36,11 +36,25 @@ void bcdfix(u8* wat)
 
 Result initServices(PrintConsole topScreen, PrintConsole bottomScreen){ //Initializes the services.
     gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
+    C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
+    
     consoleInit(GFX_TOP, &topScreen);
     consoleInit(GFX_BOTTOM, &bottomScreen);
     
     lodepng_decode32(&image, &width, &height, banner_png, banner_png_size);
     u8 *gpusrc = linearAlloc(width*height*4);
+    u8* src=image; u8 *dst=gpusrc;
+    
+    for(int i = 0; i<width*height; i++) { //Converting the big endian RGBA values from lodepng.
+        int r = *src++;
+        int g = *src++;
+        int b = *src++;
+        int a = *src++;
+        *dst++ = a;
+        *dst++ = b;
+        *dst++ = g;
+        *dst++ = r;
+    }
     
     unsigned char* image;
     unsigned width, height;
