@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <3ds.h>
 #include <string.h>
-
 #include <citro3d.h>
+#include <stdlib.h>
 
 #include "mcu.h"
 #include "RTChanger_png.h"
@@ -19,7 +19,7 @@
     GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGBA8) | \
     GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
 
-#define NUM_SPRITES 256
+#define NUM_SPRITES 1
 
 typedef struct {
     float x,y;          // Screen coordinates.
@@ -89,7 +89,7 @@ static C3D_Tex spritesheet_tex;
 static size_t numSprites = 1;
 void (*drawSprite)(size_t,int,int,int,int,int) = drawSpriteImmediate;
 
-Result initServices(PrintConsole topScreen, PrintConsole bottomScreen){ //Initializes the services.
+Result initServices(PrintConsole topScreen){ //Initializes the services.
     gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
     C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
     
@@ -145,6 +145,11 @@ void deinitServices(){
     gfxExit();
 }
 
+static void sceneExit(void) {
+    shaderProgramFree(&program); //Frees the shader program.
+    DVLB_Free(vshader_dvlb);
+}
+
 void mcuFailure(){
     printf("\n\nPress any key to exit...");
     while (aptMainLoop())
@@ -161,11 +166,6 @@ void mcuFailure(){
     return;
 }
 
-static void sceneExit(void) {
-    shaderProgramFree(&program); //Frees the shader program.
-    DVLB_Free(vshader_dvlb);
-}
-
 static void sceneRender(void) {
     int i;
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_projection, &projection); //Updates the uniforms.
@@ -177,7 +177,7 @@ static void sceneRender(void) {
 int main()
 {
     gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
-    PrintConsole topScreen, bottomScreen;
+    PrintConsole topScreen;
     consoleInit(GFX_TOP, &topScreen);
     consoleSelect(&topScreen);
     Result res = mcuInit();
