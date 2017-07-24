@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <3ds.h>
 #include <string.h>
+
+#include <citro3d.h>
+
 #include "mcu.h"
 #include "banner_png.h"
 
@@ -36,6 +39,9 @@ Result initServices(PrintConsole topScreen, PrintConsole bottomScreen){ //Initia
     consoleInit(GFX_TOP, &topScreen);
     consoleInit(GFX_BOTTOM, &bottomScreen);
     
+    lodepng_decode32(&image, &width, &height, banner_png, banner_png_size);
+    u8 *gpusrc = linearAlloc(width*height*4);
+    
     unsigned char* image;
     unsigned width, height;
     
@@ -50,7 +56,6 @@ Result initServices(PrintConsole topScreen, PrintConsole bottomScreen){ //Initia
     free(image);
     linearFree(gpusrc);
     
-    lodepng_decode32(&image, &width, &height, banner_png, banner_png_size);
     Result res = mcuInit();
     return res;
 }
