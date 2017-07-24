@@ -35,8 +35,21 @@ Result initServices(PrintConsole topScreen, PrintConsole bottomScreen){ //Initia
     gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
     consoleInit(GFX_TOP, &topScreen);
     consoleInit(GFX_BOTTOM, &bottomScreen);
+    
     unsigned char* image;
     unsigned width, height;
+    
+    GSPGPU_FlushDataCache(gpusrc, width*height*4);           //Ensures the 'banner.png' is in physical RAM.
+    
+    C3D_TexInit(&spritesheet_tex, width, height, GPU_RGBA8); //Loads the texture and bind it to the first texture unit.
+    //Converts the image to 3DS tiled texture format.
+    C3D_SafeDisplayTransfer ((u32*)gpusrc, GX_BUFFER_DIM(width,height), (u32*)spritesheet_tex.data, GX_BUFFER_DIM(width,height), TEXTURE_TRANSFER_FLAGS);
+    gspWaitForPPF();
+    C3D_TexSetFilter(&spritesheet_tex, GPU_LINEAR, GPU_NEAREST);
+    C3D_TexBind(0, &spritesheet_tex);
+    free(image);
+    linearFree(gpusrc);
+    
     lodepng_decode32(&image, &width, &height, banner_png, banner_png_size);
     Result res = mcuInit();
     return res;
@@ -70,6 +83,7 @@ int main()
     consoleInit(GFX_BOTTOM, &bottomScreen);
     consoleSelect(&bottomScreen);
     Result res = mcuInit();
+    
     if(res < 0)
     {
         printf("Failed to init MCU: %08X\n", res);
@@ -81,6 +95,9 @@ int main()
         mcuFailure();
         return -1;
     }
+    printf ("\x1b[35m-\x1b[0m \x1b[31m-\x1b[0m \x1b[33m-\x1b[0m     "); //Mind the three printfs with seemingly garbage code. It just makes the bottom screen look pretty.
+    printf ("  \x1b[32mRTChanger Version1.0\x1b[0m");
+    printf ("\x1b[35m-\x1b[0m \x1b[31m-\x1b[0m \x1b[33m-\x1b[0m       \n \n");
     puts ("Welcome to RTChanger! \n");                                    //Notifications to user after booting RTChanger.
     puts ("Using this program, you can manually    change the Raw RTC."); //Extra spaces between words so that the screen doesn't separate them.
     puts ("The Raw RTC is your hidden System Clock.Editing this allows you to bypass       timegates.");
