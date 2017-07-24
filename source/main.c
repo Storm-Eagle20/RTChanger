@@ -3,20 +3,6 @@
 #include <string.h>
 #include "mcu.h"
 
-#define hangmacro() \
-({\
-    puts("Press a key to exit...");\
-    while(aptMainLoop())\
-    {\
-        hidScanInput();\
-        if(hidKeysDown())\
-        {\
-            goto killswitch;\
-        }\
-        gspWaitForVBlank();\
-    }\
-})
-
 typedef struct  
 {
     u8 seconds;
@@ -25,23 +11,51 @@ typedef struct
     u8 something; //Unused value.
     u8 day;
     u8 month;
-    u8 year;   
+    u8 year;
 } RTC;
 
 const int cursorOffset[] = { //Sets a cursor below the selected value.
-     19,
-     16,
-     13,
-     0, //Unused offset.
-     10,
-     7,
-     3
+    19,
+    16,
+    13,
+    0, //Unused offset.
+    10,
+    7,
+    3
  };
 
 void bcdfix(u8* wat)
 {
     if((*wat & 0xF) == 0xF) *wat -= 6;
     if((*wat & 0xF) == 0xA) *wat += 6;
+}
+
+Result initServices(PrintConsole topScreen, PrintConsole bottomScreen){ //Initializes the services.
+    gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
+    consoleInit(GFX_TOP, &topScreen);
+    consoleInit(GFX_BOTTOM, &bottomScreen);
+    Result res = mcuInit();
+    return res;
+}
+
+void deinitServices(){
+    mcuExit();
+    gfxExit();
+}
+
+void mcuFailure(){
+    printf("\n\nPress any key to exit...");
+    while (aptMainLoop())
+    {
+        hidScanInput();
+        if(hidKeysDown())
+        {
+            deinitServices();
+            break;
+        }
+        gspWaitForVBlank();
+    }
+    return;
 }
 
 int main ()
@@ -60,7 +74,8 @@ int main ()
         puts("If you have Luma3DS 8.0 and up, just    ignore the above message and patch SM.  Restart the application afterwards.");
         puts("If you are confused, please visit my    GitHub and view the README.\n \n \n");
         puts("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
-        hangmacro();
+        mcuFailure();
+        return -1;
     }
     puts ("Welcome to RTChanger! \n");                                    //Notifications to user after booting RTChanger.
     puts ("Using this program, you can manually    change the Raw RTC."); //Extra spaces between words so that the screen doesn't separate them.
@@ -82,7 +97,7 @@ int main ()
     
     u8* buf = &rtctime;
     u8 offs = 0;
-    while (aptMainLoop())                           //Detects the input for the A button.
+    while (aptMainLoop()) //Detects the input for the A button.
     {   
         printf ("\x1b[0;0H");
         puts ("Here you can change your time. Changing backwards is not recommended.");
@@ -97,7 +112,7 @@ int main ()
         
         if(kHeld & KEY_START) break;  //User can choose to continue or return to the Home Menu.  
         
-        if(kDown & (KEY_UP))     //Detects if the UP D-PAD button was pressed.
+        if(kDown & (KEY_UP))          //Detects if the UP D-PAD button was pressed.
         {    
             buf[offs]++; //Makes an offset increasing the original value by one.
             switch(offs)
@@ -119,7 +134,7 @@ int main ()
                     break;
             }       
         }
-        if(kDown & (KEY_DOWN))    //Detects if the UP D-PAD button was pressed.
+        if(kDown & (KEY_DOWN))       //Detects if the UP D-PAD button was pressed.
         {    
             buf[offs]--; //Makes an offset decreasing the original value by one.
             switch(offs)
@@ -152,13 +167,13 @@ int main ()
             else if(offs) offs--;
         }
         
-        if(kDown & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT))
+        if(kDown & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT)) //The code for allowing the user to change the time.
         {
             bcdfix(buf + offs);
             printf("20%02X/%02X/%02X %02X:%02X:%02X\n", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
-            printf("%*s\e[0K", cursorOffset[offs], "^^");
+            printf("%*s\e[0K", cursorOffset[offs], "^^"); //The cursor.
         }
-        if(kDown & KEY_A)
+        if(kDown & KEY_A) //Allows the user to save the changes. Not implemented yet.
         {
         }
         
@@ -166,10 +181,6 @@ int main ()
         gfxSwapBuffers();
         gspWaitForVBlank();
     }
-    killswitch:
-    
-    mcuExit();
-    gfxExit();
     
     return 0;
 }
