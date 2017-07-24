@@ -30,10 +30,10 @@ typedef struct {
 Sprite sprites[NUM_SPRITES];
 
 struct { float left, right, top, bottom; } images[4] = {
-    {0.0f, 0.5f, 0.0f, 0.5f},
-    {0.5f, 1.0f, 0.0f, 0.5f},
-    {0.0f, 0.5f, 0.5f, 1.0f},
-    {0.5f, 1.0f, 0.5f, 1.0f},
+    {0.0f, 1.0f, 0.0f, 1.0f},
+    {0.0f, 1.0f, 0.0f, 1.0f},
+    {0.0f, 1.0f, 0.0f, 1.0f},
+    {0.0f, 1.0f, 0.0f, 1.0f},
 };
 
 typedef struct  
@@ -86,15 +86,25 @@ static int uLoc_projection;
 static C3D_Mtx projection;
 static C3D_Tex spritesheet_tex;
 
+static size_t numSprites = 1;
+void (*drawSprite)(size_t,int,int,int,int,int) = drawSpriteImmediate;
+
 Result initServices(PrintConsole topScreen, PrintConsole bottomScreen){ //Initializes the services.
     gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
     C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
     
-    C3D_RenderTarget* target = C3D_RenderTargetCreate(240, 400, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+    C3D_RenderTarget* target = C3D_RenderTargetCreate(240, 320, GPU_RB_RGB8, 0);
     C3D_RenderTargetSetClear(target, C3D_CLEAR_ALL, CLEAR_COLOR, 0);
     C3D_RenderTargetSetOutput(target, GFX_TOP, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
     
     consoleInit(GFX_TOP, &topScreen);
+    
+    C3D_AttrInfo* attrInfo = C3D_GetAttrInfo();
+    AttrInfo_Init(attrInfo);
+    AttrInfo_AddLoader(attrInfo, 0, GPU_FLOAT, 3); // v0=position
+    AttrInfo_AddLoader(attrInfo, 1, GPU_FLOAT, 2); // v2=texcoord
+    
+    Mtx_OrthoTilt(&projection, 0.0, 320.0, 240.0, 0.0, 0.0, 1.0, true); //Computes the projection matrix. Also uses the screen coordinates.
     
     unsigned char* image;
     unsigned width, height;
@@ -160,7 +170,7 @@ static void sceneRender(void) {
     int i;
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_projection, &projection); //Updates the uniforms.
     for(i = 0; i < NUM_SPRITES; i++) {
-        drawSprite( sprites[i].x, sprites[i].y, 32, 32, sprites[i].image);
+        drawSprite(0, 0, 32, 32, sprites[i].image);
     }
 }
 
