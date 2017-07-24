@@ -63,7 +63,7 @@ void bcdfix(u8* wat)
     if((*wat & 0xF) == 0xA) *wat += 6;
 }
 
-void drawSprite( size_t idx, int x, int y, int width, int height, int image ) {
+void drawSprite( int x, int y, int width, int height, int image ) {
     float left = images[image].left;
     float right = images[image].right;
     float top = images[image].top;
@@ -167,7 +167,7 @@ void mcuFailure(){
 }
 
 static void sceneRender(void) {
-    int i;
+    size_t i;
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_projection, &projection); //Updates the uniforms.
     for(i = 0; i < NUM_SPRITES; i++) {
         drawSprite(0, 0, 32, 32, sprites[i].image);
