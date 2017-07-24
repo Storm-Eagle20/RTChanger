@@ -5,14 +5,43 @@
 #include <citro3d.h>
 
 #include "mcu.h"
-#include "banner_png.h"
+#include "RTChanger_png.h"
+
+#define CLEAR_COLOR 0x000000FF
+
+#define DISPLAY_TRANSFER_FLAGS \ //Code from ctrulib which allows for the 3DS to transfer the rendered image to the framebuffer.
+    (GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) | \
+    GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) | \
+    GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
+
+#define TEXTURE_TRANSFER_FLAGS \ //Converts the textures to tiled format.
+    (GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) | GX_TRANSFER_RAW_COPY(0) | \
+    GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGBA8) | \
+    GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
+
+#define NUM_SPRITES 256
+
+typedef struct {
+    float x,y;          // Screen coordinates.
+    float dx, dy;       // Velocity.
+    int image;
+}Sprite;
+
+Sprite sprites[NUM_SPRITES];
+
+struct { float left, right, top, bottom; } images[4] = {
+    {0.0f, 0.5f, 0.0f, 0.5f},
+    {0.5f, 1.0f, 0.0f, 0.5f},
+    {0.0f, 0.5f, 0.5f, 1.0f},
+    {0.5f, 1.0f, 0.5f, 1.0f},
+};
 
 typedef struct  
 {
     u8 seconds;
     u8 minute;
     u8 hour;
-    u8 something; //Unused value.
+    u8 something; //Unused offset.
     u8 day;
     u8 month;
     u8 year;
@@ -34,14 +63,43 @@ void bcdfix(u8* wat)
     if((*wat & 0xF) == 0xA) *wat += 6;
 }
 
+void drawSprite( int x, int y, int width, int height, int image ) {
+    float left = images[image].left;
+    float right = images[image].right;
+    float top = images[image].top;
+    float bottom = images[image].bottom;
+    C3D_ImmDrawBegin(GPU_TRIANGLE_STRIP);    // Draws a textured quad.
+        C3D_ImmSendAttrib(x, y, 0.5f, 0.0f); // v0=position
+        C3D_ImmSendAttrib( left, top, 0.0f, 0.0f);
+        C3D_ImmSendAttrib(x, y+height, 0.5f, 0.0f);
+        C3D_ImmSendAttrib( left, bottom, 0.0f, 0.0f);
+        C3D_ImmSendAttrib(x+width, y, 0.5f, 0.0f);
+        C3D_ImmSendAttrib( right, top, 0.0f, 0.0f);
+        C3D_ImmSendAttrib(x+width, y+height, 0.5f, 0.0f);
+        C3D_ImmSendAttrib( right, bottom, 0.0f, 0.0f);
+    C3D_ImmDrawEnd();
+}
+
+static DVLB_s* vshader_dvlb;
+static shaderProgram_s program;
+static int uLoc_projection;
+static C3D_Mtx projection;
+static C3D_Tex spritesheet_tex;
+
 Result initServices(PrintConsole topScreen, PrintConsole bottomScreen){ //Initializes the services.
     gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
     C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
     
-    consoleInit(GFX_TOP, &topScreen);
-    consoleInit(GFX_BOTTOM, &bottomScreen);
+    C3D_RenderTarget* target = C3D_RenderTargetCreate(240, 400, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+    C3D_RenderTargetSetClear(target, C3D_CLEAR_ALL, CLEAR_COLOR, 0);
+    C3D_RenderTargetSetOutput(target, GFX_TOP, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
     
-    lodepng_decode32(&image, &width, &height, banner_png, banner_png_size);
+    consoleInit(GFX_TOP, &topScreen);
+    
+    unsigned char* image;
+    unsigned width, height;
+    
+    lodepng_decode32(&image, &width, &height, RTChanger_png, RTChanger_png_size);
     u8 *gpusrc = linearAlloc(width*height*4);
     u8* src=image; u8 *dst=gpusrc;
     
@@ -55,9 +113,6 @@ Result initServices(PrintConsole topScreen, PrintConsole bottomScreen){ //Initia
         *dst++ = g;
         *dst++ = r;
     }
-    
-    unsigned char* image;
-    unsigned width, height;
     
     GSPGPU_FlushDataCache(gpusrc, width*height*4);           //Ensures the 'banner.png' is in physical RAM.
     
@@ -75,6 +130,7 @@ Result initServices(PrintConsole topScreen, PrintConsole bottomScreen){ //Initia
 }
 
 void deinitServices(){
+    C3D_Fini();
     mcuExit();
     gfxExit();
 }
@@ -86,6 +142,7 @@ void mcuFailure(){
         hidScanInput();
         if(hidKeysDown())
         {
+            sceneExit();
             deinitServices();
             break;
         }
@@ -94,13 +151,25 @@ void mcuFailure(){
     return;
 }
 
+static void sceneExit(void) {
+    shaderProgramFree(&program); //Frees the shader program.
+    DVLB_Free(vshader_dvlb);
+}
+
+static void sceneRender(void) {
+    int i;
+    C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_projection, &projection); //Updates the uniforms.
+    for(i = 0; i < NUM_SPRITES; i++) {
+        drawSprite( sprites[i].x, sprites[i].y, 32, 32, sprites[i].image);
+    }
+}
+
 int main()
 {
     gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
     PrintConsole topScreen, bottomScreen;
     consoleInit(GFX_TOP, &topScreen);
-    consoleInit(GFX_BOTTOM, &bottomScreen);
-    consoleSelect(&bottomScreen);
+    consoleSelect(&topScreen);
     Result res = mcuInit();
     
     if(res < 0)
@@ -114,18 +183,6 @@ int main()
         mcuFailure();
         return -1;
     }
-    printf ("\x1b[35m-\x1b[0m \x1b[31m-\x1b[0m \x1b[33m-\x1b[0m     "); //Mind the three printfs with seemingly garbage code. It just makes the bottom screen look pretty.
-    printf ("  \x1b[32mRTChanger Version1.0\x1b[0m");
-    printf ("\x1b[35m-\x1b[0m \x1b[31m-\x1b[0m \x1b[33m-\x1b[0m       \n \n");
-    puts ("Welcome to RTChanger! \n");                                    //Notifications to user after booting RTChanger.
-    puts ("Using this program, you can manually    change the Raw RTC."); //Extra spaces between words so that the screen doesn't separate them.
-    puts ("The Raw RTC is your hidden System Clock.Editing this allows you to bypass       timegates.");
-    puts ("As you may see, this Raw RTC is         different from the System Clock you have set.");
-    puts ("More information can be found at my     GitHub."); 
-    puts ("I highly recommend you view the README  if you haven't already.");
-    puts ("Please change your time or START to     return to the Home Menu. \n \n \n");
-    puts ("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
-    consoleSelect(&topScreen);
     
     RTC mcurtc;
     mcuReadRegister(0x30, &mcurtc, 7);
@@ -137,6 +194,7 @@ int main()
     
     u8* buf = &rtctime;
     u8 offs = 0;
+    
     while (aptMainLoop()) //Detects the input for the A button.
     {   
         printf ("\x1b[0;0H");
@@ -217,10 +275,18 @@ int main()
         {
         }
         
+        moveSprites();
+        
+        C3D_FrameBegin(C3D_FRAME_SYNCDRAW); //Renders the scene.
+        C3D_FrameDrawOn(target);
+        sceneRender();
+        C3D_FrameEnd(0);
+        
         gfxFlushBuffers();
         gfxSwapBuffers();
         gspWaitForVBlank();
     }
+    sceneExit();
     
     return 0;
 }
