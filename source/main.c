@@ -63,7 +63,7 @@ void bcdfix(u8* wat)
     if((*wat & 0xF) == 0xA) *wat += 6;
 }
 
-void drawSprite( int x, int y, int width, int height, int image ) {
+void drawSprite( size_t idx, int x, int y, int width, int height, int image ) {
     float left = images[image].left;
     float right = images[image].right;
     float top = images[image].top;
