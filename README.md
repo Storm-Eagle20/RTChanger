@@ -14,19 +14,9 @@ Please note that there are some timegates which RTChanger will not be capable of
 
 Your system has a special hidden clock inside that continues to move forward just like the regular clock and cannot be changed outside of normal circumstances. Upon booting, many games check for differences in the RTC (Your normal system clock) and Raw RTC. Games can detect whether you changed your system clock. However, changing the Raw RTC prevents the games from detecting that if done properly.
 
-# Q&A
+# What is required for this?
 
-Q: Wasn't it already possible to change the Raw RTC? Why was this developed?
-
-A: Config, a SDK devkit tool which allows you to change your Raw RTC as well exists too. This tool however has been leaked on the internet far and wide. Due to being an official devkit tool, it was not intended to be leaked and was only for PANDA and SNAKE units (3DS and New 3DS developer consoles). As this is officially created by Nintendo itself, it is copyrighted and distribution of it can lead to DMCA takedown requests. 
-
-As the Raw RTC was a value stored in the MCU, very few developers knew how to work around it. Sono, otherwise known as MarcusD, was one of these developers. There was little interest in dealing with a program which could do this, and as a new and aspiring developer, I wanted to create RTChanger especially considering reddit's /r/3DShacks community didn't have any way to change the Raw RTC, even with Boot9Strap! The only way to change it before now was to get a hold of Config.
-
----
-
-Q: What is required for this?
-
-A: This will be a .CIA and .3DSX file and requires Custom Firmware and Boot9Strap. The .3DSX also requires Luma3DS as it needs Rosalina to patch the Service Manager (SM) module. The preferred CFW for the .CIA is Luma3DS, but you can choose one at your own descretion. .CIA files are installed with FBI, as you should have gotten it installed in www.3ds.guide. 
+This will be a .CIA and .3DSX file and requires Custom Firmware and Boot9Strap. The .3DSX also requires Luma3DS as it needs Rosalina to patch the Service Manager (SM) module. The preferred CFW for the .CIA is Luma3DS, but you can choose one at your own descretion. .CIA files are installed with FBI, as you should have gotten it installed in www.3ds.guide. 
 
 
 .3DSX files are used with an entrypoint or Rosalina. The recommended entrypoint is the HBLauncher Loader. HBLauncher Loader is given in the link below.
@@ -46,6 +36,14 @@ While you can use any entrypoint you like, here is the release page for the HBLa
 If preferred, you can also use Rosalina with my program. This only requires the boot.3dsx for the Homebrew Launcher 2.0 by fincs. Open Download Play on the Home Menu, then open Rosalina [`L+Down+Select`] and patch SM if you haven't already by going to `Process patches menu` and selecting `Patch SM for service checks.` After that, go to `Miscellaneous options...` and select `Switch the hb. title to the current app`. **Do not attempt to take over any title except for Download Play. RTChanger will crash and any bug reports will be closed if the user did not use Download Play.**
 
 If the patch succeeds, press B to exit Rosalina and exit Download Play by pressing the Home Menu button and closing it. Open Download Play again and you should be in the Homebrew Menu, and you can open my application provided you patched Service Manager. 
+
+# Q&A
+
+Q: Wasn't it already possible to change the Raw RTC? Why was this developed?
+
+A: Config, a SDK devkit tool which allows you to change your Raw RTC as well exists too. This tool however has been leaked on the internet far and wide. Due to being an official devkit tool, it was not intended to be leaked and was only for PANDA and SNAKE units (3DS and New 3DS developer consoles). As this is officially created by Nintendo itself, it is copyrighted and distribution of it can lead to DMCA takedown requests. 
+
+As the Raw RTC was a value stored in the MCU, very few developers knew how to work around it. Sono, otherwise known as MarcusD, was one of these developers. There was little interest in dealing with a program which could do this, and as a new and aspiring developer, I wanted to create RTChanger especially considering reddit's /r/3DShacks community didn't have any way to change the Raw RTC, even with Boot9Strap! The only way to change it before now was to get a hold of Config.
 
 ---
 
