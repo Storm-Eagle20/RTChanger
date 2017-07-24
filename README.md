@@ -29,15 +29,23 @@ Q: What is required for this?
 A: This will be a .CIA and .3DSX file and requires Custom Firmware and Boot9Strap. The .3DSX also requires Luma3DS as it needs Rosalina to patch the Service Manager (SM) module. The preferred CFW for the .CIA is Luma3DS, but you can choose one at your own descretion. .CIA files are installed with FBI, as you should have gotten it installed in www.3ds.guide. 
 
 
-.3DSX files are used with an entrypoint. The recommended entrypoint is the HBLoader. You can get it in the link below. Do NOT attempt to launch RTChanger through an entrypoint which was entered by switching the hb. title using Rosalina. RTChanger will crash if you do that.
+.3DSX files are used with an entrypoint or Rosalina. The recommended entrypoint is the HBLauncher Loader. HBLauncher Loader is given in the link below.
+
+https://github.com/yellows8/hblauncher_loader/releases
+
+If you're unfamiliar with .3DSX files, you'll need fincs' Homebrew Launcher 2.0. Get the boot.3dsx and put it at the root of your SD card.
+
+https://github.com/fincs/new-hbmenu/releases
 
 # **You must patch Service Manager to use the .3DSX version.**
 
-Open Rosalina, go to `Process patches menu`, and select `Patch SM for service checks.` You CANNOT use the .3DSX version of RTChanger without doing this first. The .CIA version doesn't require this, however.
+Open Rosalina [`L+Down+Select`], go to `Process patches menu`, and select `Patch SM for service checks.` You CANNOT use the .3DSX version of RTChanger without doing this first. The .CIA version doesn't require this, however.
 
 While you can use any entrypoint you like, here is the release page for the HBLauncher_Loader .CIA, which will allow you to access userland to boot up the .3DSX if you don't have access to any other entrypoint.
 
-https://github.com/yellows8/hblauncher_loader/releases
+If preferred, you can also use Rosalina with my program. This only requires the boot.3dsx for the Homebrew Launcher 2.0 by fincs. Open Download Play on the Home Menu, then open Rosalina [`L+Down+Select`] and patch SM if you haven't already by going to `Process patches menu` and selecting `Patch SM for service checks.` After that, go to `Miscellaneous options...` and select `Switch the hb. title to the current app`. **Do not attempt to take over any title except for Download Play. RTChanger will crash and any bug reports will be closed if the user did not use Download Play.**
+
+If the patch succeeds, press B to exit Rosalina and exit Download Play by pressing the Home Menu button and closing it. Open Download Play again and you should be in the Homebrew Menu, and you can open my application provided you patched Service Manager. 
 
 ---
 
