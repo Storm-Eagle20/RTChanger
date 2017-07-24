@@ -2,6 +2,7 @@
 #include <3ds.h>
 #include <string.h>
 #include "mcu.h"
+#include "banner_png.h"
 
 typedef struct  
 {
@@ -34,6 +35,9 @@ Result initServices(PrintConsole topScreen, PrintConsole bottomScreen){ //Initia
     gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
     consoleInit(GFX_TOP, &topScreen);
     consoleInit(GFX_BOTTOM, &bottomScreen);
+    unsigned char* image;
+    unsigned width, height;
+    lodepng_decode32(&image, &width, &height, banner_png, banner_png_size);
     Result res = mcuInit();
     return res;
 }
@@ -58,7 +62,7 @@ void mcuFailure(){
     return;
 }
 
-int main ()
+int main()
 {
     gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
     PrintConsole topScreen, bottomScreen;
