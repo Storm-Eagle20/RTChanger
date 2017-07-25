@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include "mcu.h"
+#include "lodepng.h"
 #include "RTChanger_png.h"
 
 #define CLEAR_COLOR 0x000000FF
@@ -97,6 +98,12 @@ static size_t numSprites = 1;
 void (*drawSprite)(size_t,int,int,int,int,int) = drawSpriteImmediate;
 
 Result initServices(PrintConsole topScreen, C3D_RenderTarget* target){ //Initializes the services.
+    int i;
+    
+    shaderProgramInit(&program);
+    shaderProgramSetVsh(&program, &vshader_dvlb->DVLE[0]);
+    C3D_BindProgram(&program);
+    
     gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
     C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
     
@@ -114,6 +121,7 @@ Result initServices(PrintConsole topScreen, C3D_RenderTarget* target){ //Initial
     unsigned width, height;
     
     lodepng_decode32(&image, &width, &height, RTChanger_png, RTChanger_png_size);
+    
     u8 *gpusrc = linearAlloc(width*height*4);
     u8* src=image; u8 *dst=gpusrc;
     
@@ -143,6 +151,23 @@ Result initServices(PrintConsole topScreen, C3D_RenderTarget* target){ //Initial
     consoleSelect(&topScreen);
     Result res = mcuInit();
     return res;
+}
+
+static void moveSprites() {
+
+    int i;
+
+    for(i = 0; i < numSprites; i++) {
+        sprites[i].x += sprites[i].dx;
+        sprites[i].y += sprites[i].dy;
+
+        //check for collision with the screen boundaries
+        if(sprites[i].x < 1 || sprites[i].x > (400-32))
+            sprites[i].dx = -sprites[i].dx;
+
+        if(sprites[i].y < 1 || sprites[i].y > (240-32))
+            sprites[i].dy = -sprites[i].dy;
+    }
 }
 
 void deinitServices(){
