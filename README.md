@@ -109,4 +109,8 @@ LiquidFenrir on Discord. I'm not joking when I say that he seriously assisted me
 
 The 3DSHacks #dev community on Discord. I had quite a few questions to ask there. I also desperately needed new Makefiles to create .CIA and .3DSX files.
 
+Fenrir for helping me solve some issues when I was trying to compile.
+
+MassExplosion213 for helping me with multiple code segments, particularly related to Citro3D.
+
 Smealum for ctrulib. I really needed that library.
