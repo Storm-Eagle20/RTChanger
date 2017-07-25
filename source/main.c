@@ -96,15 +96,12 @@ static C3D_Tex spritesheet_tex;
 static size_t numSprites = 1;
 void (*drawSprite)(size_t,int,int,int,int,int) = drawSpriteImmediate;
 
-Result initServices(PrintConsole topScreen){ //Initializes the services.
+Result initServices(PrintConsole topScreen, C3D_RenderTarget* target){ //Initializes the services.
     gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
     C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
     
-    C3D_RenderTarget* target = C3D_RenderTargetCreate(240, 320, GPU_RB_RGB8, 0);
     C3D_RenderTargetSetClear(target, C3D_CLEAR_ALL, CLEAR_COLOR, 0);
     C3D_RenderTargetSetOutput(target, GFX_TOP, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
-    
-    consoleInit(GFX_TOP, &topScreen);
     
     C3D_AttrInfo* attrInfo = C3D_GetAttrInfo();
     AttrInfo_Init(attrInfo);
@@ -141,7 +138,9 @@ Result initServices(PrintConsole topScreen){ //Initializes the services.
     C3D_TexBind(0, &spritesheet_tex);
     free(image);
     linearFree(gpusrc);
-    
+	
+    consoleInit(GFX_TOP, &topScreen);
+    consoleSelect(&topScreen);
     Result res = mcuInit();
     return res;
 }
@@ -183,11 +182,9 @@ static void sceneRender(void) {
 
 int main()
 {
-    gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
     PrintConsole topScreen;
-    consoleInit(GFX_TOP, &topScreen);
-    consoleSelect(&topScreen);
-    Result res = mcuInit();
+    C3D_RenderTarget* target = C3D_RenderTargetCreate(240, 320, GPU_RB_RGB8, 0);
+    Result res = initServices(topScreen, target);
     
     if(res < 0)
     {
