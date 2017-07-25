@@ -113,4 +113,6 @@ Fenrir for helping me solve some issues when I was trying to compile.
 
 MassExplosion213 for helping me with multiple code segments, particularly related to Citro3D.
 
+WinterMute for the header file for lodepng.h.
+
 Smealum for ctrulib. I really needed that library.
