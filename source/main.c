@@ -211,6 +211,10 @@ static void sceneRender(void) {
 
 int main()
 {
+    u32 kDown = 0;
+    u32 kHeld = 0;
+    u32 kUp = 0;
+    
     hidScanInput();               //Scans for input.
     kDown = hidKeysDown();        //Detects if the A button was pressed.
     kHeld = hidKeysHeld();        //Detects if the A button was held.
