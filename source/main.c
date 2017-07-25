@@ -108,7 +108,6 @@ Result initServices(PrintConsole topScreen, C3D_RenderTarget* target){ //Initial
     shaderProgramSetVsh(&program, &vshader_dvlb->DVLE[0]);
     C3D_BindProgram(&program);
     
-    gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
     C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
     
     C3D_RenderTargetSetClear(target, C3D_CLEAR_ALL, CLEAR_COLOR, 0);
@@ -211,16 +210,16 @@ static void sceneRender(void) {
 
 int main()
 {
+    gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
     u32 kDown = 0;
     u32 kHeld = 0;
     u32 kUp = 0;
     
+    while (!(kDown & KEY_A))
+    {
     hidScanInput();               //Scans for input.
     kDown = hidKeysDown();        //Detects if the A button was pressed.
-    kHeld = hidKeysHeld();        //Detects if the A button was held.
-    kUp = hidKeysUp();            //Detects if the A button was just released.
-    while(kDown & KEY_A) 
-    {
+    }
     PrintConsole topScreen;
     C3D_RenderTarget* target = C3D_RenderTargetCreate(240, 320, GPU_RB_RGB8, 0);
     Result res = initServices(topScreen, target);
@@ -240,10 +239,6 @@ int main()
     RTC mcurtc;
     mcuReadRegister(0x30, &mcurtc, 7);
     RTC rtctime;
-    
-    u32 kDown = 0;
-    u32 kHeld = 0;
-    u32 kUp = 0;
     
     u8* buf = &rtctime;
     u8 offs = 0;
@@ -339,7 +334,6 @@ int main()
         gfxSwapBuffers();
         gspWaitForVBlank();
     }
-                                                            }
     sceneExit();
     
     return 0;
