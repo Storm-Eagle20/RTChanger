@@ -219,7 +219,8 @@ int main()
     kDown = hidKeysDown();        //Detects if the A button was pressed.
     kHeld = hidKeysHeld();        //Detects if the A button was held.
     kUp = hidKeysUp();            //Detects if the A button was just released.
-    if(kDown = KEY_A) {
+    if(kDown & KEY_A) 
+    {
     PrintConsole topScreen;
     C3D_RenderTarget* target = C3D_RenderTargetCreate(240, 320, GPU_RB_RGB8, 0);
     Result res = initServices(topScreen, target);
@@ -338,8 +339,8 @@ int main()
         gfxSwapBuffers();
         gspWaitForVBlank();
     }
+                                                            }
     sceneExit();
     
     return 0;
-    }
 }
