@@ -8,13 +8,13 @@
 #include "RTChanger_png.h"
 
 #define CLEAR_COLOR 0x000000FF
-
-#define DISPLAY_TRANSFER_FLAGS \ //Code from ctrulib which allows for the 3DS to transfer the rendered image to the framebuffer.
+//Code from ctrulib which allows for the 3DS to transfer the rendered image to the framebuffer.
+#define DISPLAY_TRANSFER_FLAGS \
     (GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) | \
     GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) | \
     GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
-
-#define TEXTURE_TRANSFER_FLAGS \ //Converts the textures to tiled format.
+//Converts the textures to tiled format.
+#define TEXTURE_TRANSFER_FLAGS \
     (GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) | GX_TRANSFER_RAW_COPY(0) | \
     GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGBA8) | \
     GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
@@ -170,7 +170,7 @@ static void sceneRender(void) {
     size_t i;
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_projection, &projection); //Updates the uniforms.
     for(i = 0; i < NUM_SPRITES; i++) {
-        drawSprite(0, 0, 32, 32, sprites[i].image);
+        drawSprite(i, 0, 0, 32, 32, sprites[i].image);
     }
 }
 
