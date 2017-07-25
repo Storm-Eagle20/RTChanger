@@ -21,6 +21,9 @@
 
 #define NUM_SPRITES 1
 
+#define MAX_SPRITES   1600
+#define MAX_IMMEDIATE 500
+
 typedef struct {
     float x,y;          // Screen coordinates.
     float dx, dy;       // Velocity.
@@ -63,11 +66,15 @@ void bcdfix(u8* wat)
     if((*wat & 0xF) == 0xA) *wat += 6;
 }
 
-void drawSprite( int x, int y, int width, int height, int image ) {
+static void drawSpriteImmediate( size_t idx, int x, int y, int width, int height, int image ) {
     float left = images[image].left;
     float right = images[image].right;
     float top = images[image].top;
     float bottom = images[image].bottom;
+    
+    if (idx > MAX_IMMEDIATE)
+        return;
+    
     C3D_ImmDrawBegin(GPU_TRIANGLE_STRIP);    // Draws a textured quad.
         C3D_ImmSendAttrib(x, y, 0.5f, 0.0f); // v0=position
         C3D_ImmSendAttrib( left, top, 0.0f, 0.0f);
