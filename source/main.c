@@ -4,6 +4,20 @@
 
 #include "mcu.h"
 
+#define hangmacro() \
+({\
+    puts("Press a key to exit...");\
+    while(aptMainLoop())\
+    {\
+        hidScanInput();\
+        if(hidKeysDown())\
+        {\
+            goto killswitch;\
+        }\
+        gspWaitForVBlank();\
+    }\
+})
+
 typedef struct  
 {
     u8 seconds;
@@ -38,11 +52,6 @@ Result initServices(PrintConsole topScreen){ //Initializes the services.
     return res;
 }
 
-void deinitServices(){
-     mcuExit();
-     gfxExit();
- }
-
 void mcuFailure(){
     printf("\n\nPress any key to exit...");
     while (aptMainLoop())
@@ -50,7 +59,8 @@ void mcuFailure(){
         hidScanInput();
         if(hidKeysDown())
         {
-            deinitServices();
+            mcuExit;
+            gfxExit;
             break;
         }
         gspWaitForVBlank();
@@ -68,15 +78,14 @@ int main ()
     Result res = mcuInit();
     if(res < 0)
     {
-        consoleSelect(&topScreen);
+        consoleSelect(&topScreen)
         printf("Failed to init MCU: %08X\n", res);
         puts("This .3DSX was likely opened without    Luma3DS or a SM patch.");
         puts("\x1b[30;41mYou cannot use this application without Luma3DS and Boot9Strap.\x1b[0m");
         puts("If you have Luma3DS 8.0 and up, just    ignore the above message and patch SM.  Restart the application afterwards.");
         puts("If you are confused, please visit my    GitHub and view the README.\n \n \n");
         puts("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
-        mcuFailure();
-        return -1;
+        hangmacro();
     }
     
     puts ("Welcome to RTChanger! \n");                                    //Notifications to user after booting RTChanger.
@@ -185,8 +194,10 @@ int main ()
         gfxSwapBuffers();
         gspWaitForVBlank();
     }
-     mcuExit();
-     gfxExit();
+    killswitch:
+    
+    mcuExit();
+    gfxExit();
     
     return 0;
 }
