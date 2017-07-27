@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <3ds.h>
 #include <string.h>
-#include <sf2d.h>
-#include <stdlib.h>
 
 #include "mcu.h"
 
@@ -35,10 +33,15 @@ void bcdfix(u8* wat)
 
 Result initServices(PrintConsole topScreen){ //Initializes the services.
     consoleInit(GFX_TOP, &topScreen);
-    consoleSelect(&topScreen);
+    consoleInit(GFX_BOTTOM, &bottomScreen);
     Result res = mcuInit();
     return res;
 }
+
+void deinitServices(){
+     mcuExit();
+     gfxExit();
+ }
 
 void mcuFailure(){
     printf("\n\nPress any key to exit...");
@@ -47,7 +50,6 @@ void mcuFailure(){
         hidScanInput();
         if(hidKeysDown())
         {
-            sceneExit();
             deinitServices();
             break;
         }
@@ -56,22 +58,17 @@ void mcuFailure(){
     return;
 }
 
-int main()
+int main ()
 {
     gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
-    u32 kDown = 0;
-    u32 kHeld = 0;
-    u32 kUp = 0;
-    
-    while (!(kDown & KEY_A))
-    {
-    hidScanInput();               //Scans for input.
-    kDown = hidKeysDown();        //Detects if the A button was pressed.
-    }
-    PrintConsole topScreen;
-    
+    PrintConsole topScreen, bottomScreen;
+    consoleInit(GFX_TOP, &topScreen);
+    consoleInit(GFX_BOTTOM, &bottomScreen);
+    consoleSelect(&bottomScreen);
+    Result res = mcuInit();
     if(res < 0)
     {
+        consoleSelect(&topScreen);
         printf("Failed to init MCU: %08X\n", res);
         puts("This .3DSX was likely opened without    Luma3DS or a SM patch.");
         puts("\x1b[30;41mYou cannot use this application without Luma3DS and Boot9Strap.\x1b[0m");
@@ -81,6 +78,16 @@ int main()
         mcuFailure();
         return -1;
     }
+    
+    puts ("Welcome to RTChanger! \n");                                    //Notifications to user after booting RTChanger.
+    puts ("Using this program, you can manually    change the Raw RTC."); //Extra spaces between words so that the screen doesn't separate them.
+    puts ("The Raw RTC is your hidden System Clock.Editing this allows you to bypass       timegates.");
+    puts ("As you may see, this Raw RTC is         different from the System Clock you have set.");
+    puts ("More information can be found at my     GitHub."); 
+    puts ("I highly recommend you view the README  if you haven't already.");
+    puts ("Please change your time or START to     return to the Home Menu. \n \n \n");
+    puts ("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
+    consoleSelect(&topScreen);
     
     RTC mcurtc;
     mcuReadRegister(0x30, &mcurtc, 7);
