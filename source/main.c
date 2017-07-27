@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "mcu.h"
-
+//The macro uses goto to head to the final four lines, exiting the MCU/GFX and returning a 0.
 #define hangmacro() \
 ({\
     puts("Press a key to exit...");\
