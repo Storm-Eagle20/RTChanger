@@ -89,21 +89,25 @@ int main ()
     puts ("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
     consoleSelect(&topScreen);
     
+    printf ("\x1b[0;0H");
+    puts ("Here you can change your time. Changing backwards is not recommended.");
+    puts ("Change your time by however you may need.");
+    puts ("The format is year, month, day, then hours,        minutes, and seconds.");
+    puts ("When you are done setting the Raw RTC, press A to save the changes. \n");
+    
     RTC mcurtc;
     mcuReadRegister(0x30, &mcurtc, 7);
     RTC rtctime;
+    
+    u32 kDown = 0;
+    u32 kHeld = 0;
+    u32 kUp = 0;
     
     u8* buf = &rtctime;
     u8 offs = 0;
     
     while (aptMainLoop()) //Detects the user input.
-    {   
-        printf ("\x1b[0;0H");
-        puts ("Here you can change your time. Changing backwards is not recommended.");
-        puts ("Change your time by however you may need.");
-        puts ("The format is year, month, day, then hours,        minutes, and seconds.");
-        puts ("When you are done setting the Raw RTC, press A to save the changes. \n");
-        
+    {          
         hidScanInput();               //Scans for input.
         kDown = hidKeysDown();        //Detects if the A button was pressed.
         kHeld = hidKeysHeld();        //Detects if the A button was held.
