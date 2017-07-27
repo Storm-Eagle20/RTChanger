@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <3ds.h>
 #include <string.h>
+#include <sf2d.h>
+#include <stdlib.h>
+
 #include "mcu.h"
 
 typedef struct  
@@ -8,7 +11,7 @@ typedef struct
     u8 seconds;
     u8 minute;
     u8 hour;
-    u8 something; //Unused value.
+    u8 something; //Unused offset.
     u8 day;
     u8 month;
     u8 year;
@@ -30,17 +33,11 @@ void bcdfix(u8* wat)
     if((*wat & 0xF) == 0xA) *wat += 6;
 }
 
-Result initServices(PrintConsole topScreen, PrintConsole bottomScreen){ //Initializes the services.
-    gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
+Result initServices(PrintConsole topScreen){ //Initializes the services.
     consoleInit(GFX_TOP, &topScreen);
-    consoleInit(GFX_BOTTOM, &bottomScreen);
+    consoleSelect(&topScreen);
     Result res = mcuInit();
     return res;
-}
-
-void deinitServices(){
-    mcuExit();
-    gfxExit();
 }
 
 void mcuFailure(){
@@ -50,6 +47,7 @@ void mcuFailure(){
         hidScanInput();
         if(hidKeysDown())
         {
+            sceneExit();
             deinitServices();
             break;
         }
@@ -58,14 +56,20 @@ void mcuFailure(){
     return;
 }
 
-int main ()
+int main()
 {
     gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
-    PrintConsole topScreen, bottomScreen;
-    consoleInit(GFX_TOP, &topScreen);
-    consoleInit(GFX_BOTTOM, &bottomScreen);
-    consoleSelect(&bottomScreen);
-    Result res = mcuInit();
+    u32 kDown = 0;
+    u32 kHeld = 0;
+    u32 kUp = 0;
+    
+    while (!(kDown & KEY_A))
+    {
+    hidScanInput();               //Scans for input.
+    kDown = hidKeysDown();        //Detects if the A button was pressed.
+    }
+    PrintConsole topScreen;
+    
     if(res < 0)
     {
         printf("Failed to init MCU: %08X\n", res);
@@ -77,27 +81,15 @@ int main ()
         mcuFailure();
         return -1;
     }
-    puts ("Welcome to RTChanger! \n");                                    //Notifications to user after booting RTChanger.
-    puts ("Using this program, you can manually    change the Raw RTC."); //Extra spaces between words so that the screen doesn't separate them.
-    puts ("The Raw RTC is your hidden System Clock.Editing this allows you to bypass       timegates.");
-    puts ("As you may see, this Raw RTC is         different from the System Clock you have set.");
-    puts ("More information can be found at my     GitHub."); 
-    puts ("I highly recommend you view the README  if you haven't already.");
-    puts ("Please change your time or START to     return to the Home Menu. \n \n \n");
-    puts ("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
-    consoleSelect(&topScreen);
     
     RTC mcurtc;
     mcuReadRegister(0x30, &mcurtc, 7);
     RTC rtctime;
     
-    u32 kDown = 0;
-    u32 kHeld = 0;
-    u32 kUp = 0;
-    
     u8* buf = &rtctime;
     u8 offs = 0;
-    while (aptMainLoop()) //Detects the input for the A button.
+    
+    while (aptMainLoop()) //Detects the user input.
     {   
         printf ("\x1b[0;0H");
         puts ("Here you can change your time. Changing backwards is not recommended.");
@@ -181,6 +173,8 @@ int main ()
         gfxSwapBuffers();
         gspWaitForVBlank();
     }
+     mcuExit();
+     gfxExit();
     
     return 0;
 }
