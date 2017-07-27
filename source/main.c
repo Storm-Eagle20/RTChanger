@@ -87,6 +87,7 @@ int main ()
     puts ("I highly recommend you view the README  if you haven't already.");
     puts ("Please change your time or START to     return to the Home Menu. \n \n \n");
     puts ("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
+    
     consoleSelect(&topScreen);
     
     printf ("\x1b[0;0H");
