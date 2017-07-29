@@ -4,20 +4,6 @@
 
 #include "mcu.h"
 //The macro uses goto to head to the final four lines, exiting the MCU/GFX and returning a 0.
-#define hangmacro() \
-({\
-    puts("Press a key to exit...");\
-    while(aptMainLoop())\
-    {\
-        hidScanInput();\
-        if(hidKeysDown())\
-        {\
-            goto killswitch;\
-        }\
-        gspWaitForVBlank();\
-    }\
-    goto killswitch;\
-})
 
 typedef struct  
 {
@@ -90,7 +76,7 @@ int main ()
         puts("If you have Luma3DS 8.0 and up, just    ignore the above message and patch SM.  Restart the application afterwards.");
         puts("If you are confused, please visit my    GitHub and view the README.\n \n \n");
         puts("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
-        hangmacro();
+        mcuFailure();
     }
     
     puts ("Welcome to RTChanger! \n");                                    //Notifications to user after booting RTChanger.
@@ -144,34 +130,34 @@ int main ()
                     if(buf[offs] == 0x24) buf[offs] = 0;
                     break;
                     
-                case 4:  //Month.
-                    if(buf[offs] == 0x13) buf[offs] = 0x01;
-                    break;
-                    
-                case 5:  //Year.
-                    if(buf[offs] == 0x51) buf[offs] = 0;
-                    break;
-                    
-                case 6:  //Days, this needs to be below Year and Month for the code to work properly.
-                    if (case 4 == 0x01, 0x03, 0x05, 0x07, 0x08, 0x0A, 0x0C) //Checks if the month is set to January, March, May, July, August, November, or December.
+                case 4:  //Days.
+                    if (buf[5] == 0x01, 0x03, 0x05, 0x07, 0x08, 0x0A, 0x0C) //Checks if the month is set to January, March, May, July, August, November, or December.
                     {
                         if(buf[offs] == 0x00) buf[offs] = 0x01;
                     }
-                    if (case 4 == 0x04, 0x06, 0x09, 0x0B) //Checks if the month is set to April, June, September, or October.
+                    if (buf[5] == 0x04, 0x06, 0x09, 0x0B) //Checks if the month is set to April, June, September, or October.
                     {
                         if(buf[offs] == 0x00) buf[offs] = 0x01
                     }
-                    if (case 4 == 0x02)  //Checks if the month is set to February.
+                    if (buf[5] == 0x02)  //Checks if the month is set to February.
                     {
-                        if (case 5 % 4 == 0)  //Checks if it's a leap year.
+                        if (buf[6] % 4 == 0)  //Checks if it's a leap year.
                         {
                             if(buf[offs] == 0x00) buf[offs] = 0x01
                         }
-                        if (case 5 % 4 != 0) //Checks if it's not a leap year.
+                        if (buf[6] % 4 != 0) //Checks if it's not a leap year.
                         {
                             if(buf[offs] == 0x00) buf[offs] = 0x01
                         }
                     }
+                    break;
+                    
+                case 5:  //Month.
+                    if(buf[offs] == 0x13) buf[offs] = 0x01;
+                    break;
+                    
+                case 6:  //Year.
+                    if(buf[offs] == 0x51) buf[offs] = 0;
                     break;
             }       
         }
@@ -189,34 +175,34 @@ int main ()
                     if(buf[offs] == 0xFF) buf[offs] = 0x23;
                     break;
                     
-                case 4:  //Month.
-                    if(buf[offs] == 0xFF) buf[offs] = 0x12;
-                    break;
-                    
-                case 5:  //Year.
-                    if(buf[offs] == 0x00) buf[offs] = 0x50;
-                    break;
-                    
-                case 6:  //Days, this needs to be below Month and Year for the code to work properly.
-                    if (case 4 == 0x01, 0x03, 0x05, 0x07, 0x08, 0x0A, 0x0C) //Checks if the month is set to January, March, May, July, August, November, or December.
+                case 4:  //Days.
+                    if (buf[5] == 0x01, 0x03, 0x05, 0x07, 0x08, 0x0A, 0x0C) //Checks if the month is set to January, March, May, July, August, November, or December.
                     {
                         if(buf[offs] == 0x00) buf[offs] = 0x31;
                     }
-                    if (case 4 == 0x04, 0x06, 0x09, 0x0B) //Checks if the month is set to April, June, September, or October.
+                    if (buf[5] == 0x04, 0x06, 0x09, 0x0B) //Checks if the month is set to April, June, September, or October.
                     {
                         if(buf[offs] == 0x00) buf[offs] = 0x30
                     }
-                    if (case 4 == 0x02)  //Checks if the month is set to February.
+                    if (buf[5] == 0x02)  //Checks if the month is set to February.
                     {
-                        if (case 5 % 4 == 0)  //Checks if it's a leap year.
+                        if (buf[6] % 4 == 0)  //Checks if it's a leap year.
                         {
                             if(buf[offs] == 0x00) buf[offs] = 0x29
                         }
-                        if (case 5 % 4 != 0) //Checks if it's not a leap year.
+                        if (buf[6] % 4 != 0) //Checks if it's not a leap year.
                         {
                             if(buf[offs] == 0x00) buf[offs] = 0x28
                         }
                     }
+                    break;
+                    
+                case 5:  //Month.
+                    if(buf[offs] == 0xFF) buf[offs] = 0x12;
+                    break;
+                    
+                case 6:  //Year.
+                    if(buf[offs] == 0x00) buf[offs] = 0x50;
                     break;
             }
         }
@@ -234,7 +220,7 @@ int main ()
         if(kDown & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT)) //The code for allowing the user to change the time.
         {
             bcdfix(buf + offs);
-            printf("20%02X/%02X/%02X %02X:%02X:%02X\n", buf[5], buf[4], buf[6], buf[2], buf[1], buf[0]); //Displays the time accordingly.
+            printf("20%02X/%02X/%02X %02X:%02X:%02X\n", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]); //Displays the time accordingly.
             printf("%*s\e[0K", cursorOffset[offs], "^^"); //The cursor.
         }
         if(kDown & KEY_A) //Allows the user to save the changes. Not implemented yet.
