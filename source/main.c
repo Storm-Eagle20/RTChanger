@@ -16,6 +16,7 @@
         }\
         gspWaitForVBlank();\
     }\
+    goto killswitch;\
 })
 
 typedef struct  
@@ -52,6 +53,11 @@ Result initServices(PrintConsole topScreen){ //Initializes the services.
     return res;
 }
 
+void deinitServices(){
+    mcuExit();
+    gfxExit();
+}
+
 void mcuFailure(){
     printf("\n\nPress any key to exit...");
     while (aptMainLoop())
@@ -59,8 +65,7 @@ void mcuFailure(){
         hidScanInput();
         if(hidKeysDown())
         {
-            mcuExit;
-            gfxExit;
+            deinitServices();
             break;
         }
         gspWaitForVBlank();
@@ -130,51 +135,97 @@ int main ()
             buf[offs]++; //Makes an offset increasing the original value by one.
             switch(offs)
             {   
-                case 0:  //seconds
-                case 1:  //minutes
+                case 0:  //Seconds.
+                case 1:  //Minutes.
+                    if(buf[offs] == 0x5A) buf[offs] = 0;
                     break;
                     
-                case 2:  //hours
+                case 2:  //Hours.
+                    if(buf[offs] == 0x24) buf[offs] = 0;
                     break;
                     
-                case 4:  //days
+                case 4:  //Month.
+                    if(buf[offs] == 0x13) buf[offs] = 0x01;
                     break;
                     
-                case 5:  //months
+                case 5:  //Year.
+                    if(buf[offs] == 0x51) buf[offs] = 0;
                     break;
                     
-                case 6:  //years
+                case 6:  //Days, this needs to be below Year and Month for the code to work properly.
+                    if (case 4 == 0x01, 0x03, 0x05, 0x07, 0x08, 0x0A, 0x0C) //Checks if the month is set to January, March, May, July, August, November, or December.
+                    {
+                        if(buf[offs] == 0x00) buf[offs] = 0x01;
+                    }
+                    if (case 4 == 0x04, 0x06, 0x09, 0x0B) //Checks if the month is set to April, June, September, or October.
+                    {
+                        if(buf[offs] == 0x00) buf[offs] = 0x01
+                    }
+                    if (case 4 == 0x02)  //Checks if the month is set to February.
+                    {
+                        if (case 5 % 4 == 0)  //Checks if it's a leap year.
+                        {
+                            if(buf[offs] == 0x00) buf[offs] = 0x01
+                        }
+                        if (case 5 % 4 != 0) //Checks if it's not a leap year.
+                        {
+                            if(buf[offs] == 0x00) buf[offs] = 0x01
+                        }
+                    }
                     break;
             }       
         }
-        if(kDown & (KEY_DOWN))       //Detects if the UP D-PAD button was pressed.
+        if(kDown & (KEY_DOWN))       //Detects if the DOWN D-PAD button was pressed.
         {    
             buf[offs]--; //Makes an offset decreasing the original value by one.
             switch(offs)
             {
-                case 0:  //seconds
-                case 1:  //minutes
+                case 0:  //Seconds.
+                case 1:  //Minutes.
+                    if(buf[offs] == 0xFF) buf[offs] = 0x59;
                     break;
                     
-                case 2:  //hours
+                case 2:  //Hours.
+                    if(buf[offs] == 0xFF) buf[offs] = 0x23;
                     break;
                     
-                case 4:  //days
+                case 4:  //Month.
+                    if(buf[offs] == 0xFF) buf[offs] = 0x12;
                     break;
                     
-                case 5:  //months
+                case 5:  //Year.
+                    if(buf[offs] == 0x00) buf[offs] = 0x50;
                     break;
                     
-                case 6:  //years
+                case 6:  //Days, this needs to be below Month and Year for the code to work properly.
+                    if (case 4 == 0x01, 0x03, 0x05, 0x07, 0x08, 0x0A, 0x0C) //Checks if the month is set to January, March, May, July, August, November, or December.
+                    {
+                        if(buf[offs] == 0x00) buf[offs] = 0x31;
+                    }
+                    if (case 4 == 0x04, 0x06, 0x09, 0x0B) //Checks if the month is set to April, June, September, or October.
+                    {
+                        if(buf[offs] == 0x00) buf[offs] = 0x30
+                    }
+                    if (case 4 == 0x02)  //Checks if the month is set to February.
+                    {
+                        if (case 5 % 4 == 0)  //Checks if it's a leap year.
+                        {
+                            if(buf[offs] == 0x00) buf[offs] = 0x29
+                        }
+                        if (case 5 % 4 != 0) //Checks if it's not a leap year.
+                        {
+                            if(buf[offs] == 0x00) buf[offs] = 0x28
+                        }
+                    }
                     break;
             }
         }
-        if(kDown & KEY_LEFT)
+        if(kDown & KEY_LEFT) //Detects if the left button was pressed.
         {
             if(offs == 2) offs = 4;
             else if(offs < 6) offs++;
         }
-        if(kDown & KEY_RIGHT)
+        if(kDown & KEY_RIGHT) //Detects if the right buttn was pressed.
         {
             if(offs == 4) offs = 2;
             else if(offs) offs--;
@@ -183,7 +234,7 @@ int main ()
         if(kDown & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT)) //The code for allowing the user to change the time.
         {
             bcdfix(buf + offs);
-            printf("20%02X/%02X/%02X %02X:%02X:%02X\n", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
+            printf("20%02X/%02X/%02X %02X:%02X:%02X\n", buf[5], buf[4], buf[6], buf[2], buf[1], buf[0]); //Displays the time accordingly.
             printf("%*s\e[0K", cursorOffset[offs], "^^"); //The cursor.
         }
         if(kDown & KEY_A) //Allows the user to save the changes. Not implemented yet.
@@ -194,7 +245,7 @@ int main ()
         gfxSwapBuffers();
         gspWaitForVBlank();
     }
-    killswitch:
+    killswitch: //Where the goto command leads to.
     
     mcuExit();
     gfxExit();
