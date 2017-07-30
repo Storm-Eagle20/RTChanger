@@ -105,14 +105,12 @@ I'm currently most active on Reddit. If you need something urgent, or would like
 
 Sono (AKA MarcusD). I would not have even started this project if it weren't for him. I am very new to coding and he has and currently is helping me with this project. A very, very helpful person.
 
-LiquidFenrir on Discord. I'm not joking when I say that he seriously assisted me in the entirety of my code around the binary coded decimals, which I was completely unfamiliar with. It would have taken weeks to get that code done without him.
+LiquidFenrir on Discord. I'm not joking when I say that he seriously assisted me in the entirety of my code around overflows and handling values before writing it to a MCU register.
 
 The 3DSHacks #dev community on Discord. I had quite a few questions to ask there. I also desperately needed new Makefiles to create .CIA and .3DSX files.
 
 Fenrir for helping me solve some issues when I was trying to compile.
 
-MassExplosion213 for helping me with multiple code segments, particularly related to Citro3D.
-
-WinterMute for the header file for lodepng.h.
+MassExplosion213 for helping me with multiple code segments.
 
 Smealum for ctrulib. I really needed that library.
