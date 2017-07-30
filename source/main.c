@@ -3,6 +3,8 @@
 #include <string.h>
 
 #include "mcu.h"
+
+#define UNITS_AMOUNT 7
 //The macro uses goto to head to the final four lines, exiting the MCU/GFX and returning a 0.
 #define hangmacro() \
 ({\
@@ -119,10 +121,22 @@ void changeRTCValue(RTC * rtctime, int offset, int change)
         bufs[offset] = maxValue[offset]-1;
 }
 
-void bcdfix(u8* wat)
+void BCDtoByte(u8 * BCD, u8 * Byte)
 {
-    if((*wat & 0xF) == 0xF) *wat -= 6;
-    if((*wat & 0xF) == 0xA) *wat += 6;
+    for (int i = 0; i < UNITS_AMOUNT; i++)
+    {
+        Byte[i] = (BCD[i] & 0xF) + (10 * (BCD[i] >> 4));
+    }
+}
+
+void ByteToBCD(u8 * Byte, u8 * BCD)
+{
+    for (int i = 0; i < UNITS_AMOUNT; i++)
+    {
+        int units = Byte[i] % 10;
+        int tens = (Byte[i] - units)/10;
+        BCD[i] = (tens << 4 | units);
+    }
 }
 
 int main ()
@@ -164,8 +178,10 @@ int main ()
     puts ("When you are done setting the Raw RTC, press A to save the changes. \n");
     
     RTC mcurtc;
-    mcuReadRegister(0x30, &mcurtc, 7);
-    RTC rtctime;
+    u8 bcdRTC[UNITS_AMOUNT] = {0};
+    mcuReadRegister(0x30, bcdRTC, UNITS_AMOUNT);
+    RTC rtctime = {0};
+    BCDtoByte(bcdRTC, (u8*)&rtctime);
     
     memset(&rtctime, 0, 7);
     rtctime.year = 1;
@@ -195,27 +211,40 @@ int main ()
             {   
                 case 0:  //Seconds.
                 case 1:  //Minutes.
-                    if(buf[offs] == 0x5A) buf[offs] = 0;
+                    if(buf[offs] == 0x60) buf[offs] = 0;
+                    
+                    if(buf[offs] == 0x0A) buf[offs] = 0x10;
+                    if(buf[offs] == 0x1A) buf[offs] = 0x20;
+                    if(buf[offs] == 0x2A) buf[offs] = 0x30;
+                    if(buf[offs] == 0x3A) buf[offs] = 0x40;
+                    if(buf[offs] == 0x4A) buf[offs] = 0x50;
                     break;
                     
                 case 2:  //Hours.
                     if(buf[offs] == 0x24) buf[offs] = 0;
+                    
+                    if(buf[offs] == 0x0A) buf[offs] = 0x10;
+                    if(buf[offs] == 0x1A) buf[offs] = 0x20;
                     break;
                     
                 case 4:  //Days.
                     if(buf[5] == 0x01 || buf[5] == 0x03 || buf[5] == 0x05 || buf[5] == 0x07 || buf[5] == 0x08 || buf[5] == 0x10 || buf[5] == 0x12) //Checks if the month is set to January, March, May, July, August, October, or December.
                     {
                         if(buf[offs] == 0x32) buf[offs] = 0x01;
+                        
+                        if(buf[offs] == 0x2A) buf[offs] = 0x30;
                     }
                     if(buf[5] == 0x04 || buf[5] == 0x06 || buf[5] == 0x09 || buf[5] == 0x11) //Checks if the month is set to April, June, September, or November.
                     {
                         if(buf[offs] == 0x31) buf[offs] = 0x01;
+                        
+                        if(buf[offs] == 0x3A) buf[offs] = 0x30;
                     }
                     if(buf[5] == 0x02)  //Checks if the month is set to February.
                     {
                         if(buf[6] % 4 == 0)  //Checks if it's a leap year.
                         {
-                            if(buf[offs] == 0x2A) buf[offs] = 0x01;
+                            if(buf[offs] == 0x30) buf[offs] = 0x01;
                         }
                         else if(buf[offs] == 0x29) buf[offs] = 0x01; //If it's not a leap year.
                     }
@@ -229,14 +258,14 @@ int main ()
                     {
                         if(buf[6] % 4 == 0)
                         {
-                            if(buf[4] == 0x2A || buf[4] == 0x31) buf[4] = 0x29;
+                            if(buf[4] == 0x30 || buf[4] == 0x31) buf[4] = 0x29;
                         }
-                        else if(buf[4] == 0x29 || buf[4] == 0x2A || buf[4] == 0x31) buf[4] = 0x28;
+                        else if(buf[4] == 0x29 || buf[4] == 0x30 || buf[4] == 0x31) buf[4] = 0x28;
                     }
                     
                     if(buf[offs] == 0x04 || buf[offs] == 0x06 || buf[offs] == 0x09 || buf[5] == 0x11)
                     {
-                        if(buf[4] == 0x31) buf[4] = 0x2A;
+                        if(buf[4] == 0x31) buf[4] = 0x30;
                     }
                     break;
                     
@@ -300,7 +329,7 @@ int main ()
                     
                     if(buf[offs] == 0x04 || buf[offs] == 0x06 || buf[offs] == 0x09 || buf[5] == 0x11)
                     {
-                        if(buf[4] == 0x31) buf[4] = 0x2A;
+                        if(buf[4] == 0x31) buf[4] = 0x29;
                     }
                     break;
                     
@@ -330,13 +359,13 @@ int main ()
         
         if(kDown & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT))
         {   //Displays the time and cursor.
-            bcdfix(buf + offs);
             printf("20%02X/%02X/%02X %02X:%02X:%02X\n", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
             printf("%*s\e[0K\e[1A\e[99D", cursorOffset[offs], "^^");
         }
         if(kDown & KEY_A) //Allows the user to save the changes. Not implemented yet.
         {
-            
+            ByteToBCD((u8*)&rtctime, bcdRTC);
+            mcuWriteRegister(0x30, bcdRTC, UNITS_AMOUNT);
         }
         
         gfxFlushBuffers();
