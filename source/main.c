@@ -72,7 +72,7 @@ const u8 minValue[] = {
 
 void setMaxDayValue(RTC rtctime)
 {
-    int year = rtctime.year;
+    int year = rtctime.year+2000;
     int maxDayValue = 30;
     
     //30, 31, 30 gets shifted after August.
