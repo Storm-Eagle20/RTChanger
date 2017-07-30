@@ -19,6 +19,16 @@
     goto killswitch;\
 })
 
+enum {
+    SECONDS_OFFSET = 0,
+    MINUTES_OFFSET,
+    HOURS_OFFSET,
+    UNUSED_OFFSET,
+    DAY_OFFSET,
+    MONTH_OFFSET,
+    YEAR_OFFSET
+};
+
 typedef struct  
 {
     u8 seconds;
@@ -38,7 +48,76 @@ const int cursorOffset[] = { //Sets a cursor below the selected value.
     10,
     7,
     3
- };
+};
+ 
+ u8 maxValue[] = {
+    60,
+    60,
+    24,
+    0, //UNUSED_OFFSET
+    32,
+    13,
+    100
+};
+
+const u8 minValue[] = {
+    0,
+    0,
+    0,
+    0, //UNUSED_OFFSET
+    1,
+    1,
+    0
+};
+
+void setMaxDayValue(RTC rtctime)
+{
+    int year = rtctime.year;
+    int maxDayValue = 30;
+    
+    //30, 31, 30 gets shifted after August.
+    maxDayValue += (rtctime.month % 2) ^ (rtctime.month >= 8);
+    
+    //Accounts for leap years and February.
+    if(rtctime.month == 2)
+    {
+        maxDayValue -= 2;
+        if (year % 4 == 0)
+        {
+            if (year % 100 == 0)
+            {
+                if (year % 400 == 0) maxDayValue++;
+            }
+            else maxDayValue++;
+        }
+    }
+    
+    maxValue[DAY_OFFSET] = maxDayValue+1;
+}
+
+void handleOverflow(RTC * rtctime)
+{
+    u8 * bufs = (u8*)rtctime;
+    for(int i = 0; i < UNITS_AMOUNT; i++)
+    {
+        if(bufs[i] >= maxValue[i] && i+1 < UNITS_AMOUNT)
+        {
+            if(i == UNUSED_OFFSET) continue;
+            bufs[i] = minValue[i];
+            int offset = 1;
+            if (i+offset == UNUSED_OFFSET) offset++;
+            bufs[i+offset]++;
+        }
+    }
+}
+
+void changeRTCValue(RTC * rtctime, int offset, int change)
+{
+    u8 * bufs = (u8*)rtctime;
+    bufs[offset] += change;
+    if(bufs[offset] < minValue[offset] || bufs[offset] > maxValue[offset])
+        bufs[offset] = maxValue[offset]-1;
+}
 
 void bcdfix(u8* wat)
 {
@@ -250,13 +329,14 @@ int main ()
         }
         
         if(kDown & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT))
-        { //Displays the time and cursor.
+        {   //Displays the time and cursor.
             bcdfix(buf + offs);
             printf("20%02X/%02X/%02X %02X:%02X:%02X\n", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
             printf("%*s\e[0K\e[1A\e[99D", cursorOffset[offs], "^^");
         }
         if(kDown & KEY_A) //Allows the user to save the changes. Not implemented yet.
         {
+            
         }
         
         gfxFlushBuffers();
