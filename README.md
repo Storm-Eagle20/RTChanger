@@ -122,6 +122,8 @@ The 3DSHacks #dev community on Discord. I had quite a few questions to ask there
 
 Fenrir for helping me solve some issues when I was trying to compile.
 
+AstronautLevel for helping me on getting the system to reset.
+
 MassExplosion213 for helping me with multiple code segments.
 
 Smealum for ctrulib. I really needed that library.
