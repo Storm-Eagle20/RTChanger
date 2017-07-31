@@ -182,11 +182,6 @@ int main ()
     mcuReadRegister(0x30, &rtctime, UNITS_AMOUNT);
     BCD_to_RTC(&rtctime);
     
-    memset(&rtctime, 0, 7);
-    rtctime.year = 1;
-    rtctime.month = 1;
-    rtctime.day = 1;
-    
     u32 kDown = 0;
     u32 kHeld = 0;
     u32 kUp = 0;
@@ -230,11 +225,12 @@ int main ()
             if(offs < SECONDS_OFFSET) offs = YEAR_OFFSET;
         }
         
-        if(kDown & KEY_A) //Allows the user to save the changes. Not implemented yet.
+        if(kDown & KEY_A) //Allows the user to save the changes.
         {
             RTC_to_BCD(&rtctime);
             ret = mcuWriteRegister(0x30, &rtctime, UNITS_AMOUNT);
             BCD_to_RTC(&rtctime);
+            break;
         }
         
         setMaxDayValue(&rtctime);
