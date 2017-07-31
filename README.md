@@ -54,7 +54,7 @@ As the Raw RTC was a value stored in the MCU, very few developers knew how to wo
 
 Q: Will there be a GodMode9 script?
 
-A: I have reached out to d0k3, however it is his decision as to whether he wishes to implement RTC scripting on GodMode9. As of writing this I have not received a response as to whether he'll do anything. I can attempt to port RTChanger to GodMode9 when the project is finished, however there is no guarantees this can be ported and I am not going to disturb him more than once on this issue.
+A: I have reached out to d0k3, however it is his decision as to whether he wishes to implement RTC scripting on GodMode9. I am currently talking with him right now about whether it will be implemented in GM9 or not.
 
 ---
 
