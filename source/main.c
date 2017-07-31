@@ -5,21 +5,6 @@
 #include "mcu.h"
 
 #define UNITS_AMOUNT 7
-//The macro uses goto to head to the final four lines, exiting the MCU/GFX and returning a 0.
-#define hangmacro() \
-({\
-    puts("Press a key to exit...");\
-    while(aptMainLoop())\
-    {\
-        hidScanInput();\
-        if(hidKeysDown())\
-        {\
-            goto killswitch;\
-        }\
-        gspWaitForVBlank();\
-    }\
-    goto killswitch;\
-})
 
 enum {
     SECONDS_OFFSET = 0,
@@ -118,6 +103,32 @@ void setMaxDayValue(RTC * rtctime)
     if(rtctime->day == previousMax) rtctime->day = maxDayValue;
 }
 
+Result initServices(PrintConsole topScreen){ //Initializes the services.
+    consoleInit(GFX_TOP, &topScreen);
+    Result ret = mcuInit();
+    return ret;
+}
+
+void deinitServices(){
+     mcuExit();
+     gfxExit();
+ }
+
+void mcuFailure(){
+    printf("\n\nPress any key to exit...");
+    while (aptMainLoop())
+    {
+        hidScanInput();
+        if(hidKeysDown())
+        {
+            deinitServices();
+            break;
+        }
+        gspWaitForVBlank();
+    }
+    return;
+}
+
 void RTC_to_BCD(RTC * rtctime)
 {
     u8 * bufs = (u8*)rtctime;
@@ -157,7 +168,8 @@ int main ()
         puts("If you have Luma3DS 8.0 and up, just \nignore the above message and patch SM.  Restart the application afterwards.");
         puts("If you are confused, please visit my \nGitHub and view the README.\n \n \n");
         puts("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
-        hangmacro();
+        mcuFailure();
+        return -1;
     }
     
     puts ("\x1b[35m-\x1b[0m\x1b[31m-\x1b[0m\x1b[33m-\x1b[0m       \x1b[32mRTChanger Version1.0\x1b[0m       \x1b[35m-\x1b[0m\x1b[31m-\x1b[0m\x1b[33m-\x1b[0m");
@@ -230,6 +242,8 @@ int main ()
             RTC_to_BCD(&rtctime);
             ret = mcuWriteRegister(0x30, &rtctime, UNITS_AMOUNT);
             BCD_to_RTC(&rtctime);
+            mcuExit();
+            gfxExit();
             break;
         }
         
@@ -239,7 +253,6 @@ int main ()
         gfxSwapBuffers();
         gspWaitForVBlank();
     }
-    killswitch: //Where the goto command leads to.
     
     mcuExit();
     gfxExit();
