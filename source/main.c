@@ -163,11 +163,7 @@ int main ()
     {
         consoleSelect(&topScreen);
         printf("Failed to init MCU: %08X\n", ret);
-        puts("This .3DSX was likely opened without \nLuma3DS or a SM patch.");
-        puts("\x1b[30;41mYou cannot use the .3DSX without Luma3DS and Boot9Strap.\x1b[0m");
-        puts("If you have Luma3DS 8.0 and up, just \nignore the above message and patch SM.  Restart the application afterwards.");
-        puts("If you are confused, please visit my \nGitHub and view the README.\n \n \n");
-        puts("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
+        puts("If this error persists, use Rosalina to patch\n Service Manager.\n");
         mcuFailure();
         return -1;
     }
@@ -239,12 +235,29 @@ int main ()
         
         if(kDown & KEY_A) //Allows the user to save the changes.
         {
-            RTC_to_BCD(&rtctime);
-            ret = mcuWriteRegister(0x30, &rtctime, UNITS_AMOUNT);
-            BCD_to_RTC(&rtctime);
-            mcuExit();
-            gfxExit();
-            break;
+            printf("\n\nIn order for the changes to take place, you must restart your console.\n");
+            printf("Are you sure you want to continue?\n");
+            printf("\x1b[32mSTART Button: Yes!\x1b[0m \n");
+            printf("\x1b[31mB Button: Exit the application.\x1b[0m");
+            
+            if(kDown & KEY_START)
+            {
+                RTC_to_BCD(&rtctime);
+                ret = mcuWriteRegister(0x30, &rtctime, UNITS_AMOUNT);
+                BCD_to_RTC(&rtctime);
+                
+                mcuExit();
+                gfxExit();
+                
+                PTMSYSM_ShutdownAsync(0);
+                ptmSysmExit();
+            }
+            if(kDown & KEY_B)
+            {
+                mcuExit();
+                gfxExit();
+                break;
+            }
         }
         
         setMaxDayValue(&rtctime);
