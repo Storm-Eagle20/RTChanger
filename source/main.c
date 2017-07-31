@@ -147,8 +147,8 @@ int main ()
     consoleInit(GFX_TOP, &topScreen);
     consoleInit(GFX_BOTTOM, &bottomScreen);
     consoleSelect(&bottomScreen);
-    Result res = mcuInit();
-    if(res < 0)
+    Result ret = mcuInit();
+    if(R_FAILED(ret))
     {
         consoleSelect(&topScreen);
         printf("Failed to init MCU: %08X\n", res);
