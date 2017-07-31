@@ -8,16 +8,21 @@ There are many applications in different games as some games have more than one 
 
 Let's take Pokemon Sun and Moon for an example. You want to train your Pokemon in Poke Pelago. That can take two days or more. Then you want to grow berries which can take days. You also want to do the daily lottery in Festival Plaza, too. Imagine with a new homebrew application, you no longer have to wait. That is now a reality, and RTChanger can manually change your time ahead by any value you want. Almost every timegate in 3DS games will ge gone and you'll be able to rapidly train your Pokemon, grow thousands of berries within an hour, and get tons of stuff by the lottery.
 
+Here's a 3DBrew article on it, which is an extremely reputable source on this.
+
+https://3dbrew.org/wiki/Anti_Time-Travel
+
 Please note that there are some timegates which RTChanger will not be capable of bypassing. Some timegates are server based, meaning the server keeps the time on their end, and RTChanger cannot bypass these as it's client-side only and there is no possibility of server-based timegate bypassing.
 
 # What is the Raw RTC?
 
-Your system has a special hidden clock inside that continues to move forward just like the regular clock and cannot be changed outside of normal circumstances. Upon booting, many games check for differences in the RTC (Your normal system clock) and Raw RTC. Games can detect whether you changed your system clock. However, changing the Raw RTC prevents the games from detecting that if done properly.
+As you may have seen above in the 3DBrew link, your system has a special hidden clock inside that continues to move forward just like the regular clock and cannot be changed outside of normal circumstances. Upon booting, many games check for differences in the RTC (Your normal system clock) and Raw RTC. Games can detect whether you changed your system clock. However, changing the Raw RTC prevents the games from detecting that if done properly.
+
+As a note, some people call it the Raw RTC, RTC, or hardware clock, but all of these are the same thing (except Nintendo refers to the System Clock which you can set as the `RTC`).
 
 # What is required for this?
 
 This will be a .CIA and .3DSX file and requires Custom Firmware and Boot9Strap. The .3DSX also requires Luma3DS as it needs Rosalina to patch the Service Manager (SM) module. The preferred CFW for the .CIA is Luma3DS, but you can choose one at your own descretion. .CIA files are installed with FBI, as you should have gotten it installed in www.3ds.guide. 
-
 
 .3DSX files are used with an entrypoint or Rosalina. The recommended entrypoint is the HBLauncher Loader. HBLauncher Loader is given in the link below.
 
