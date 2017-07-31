@@ -154,7 +154,6 @@ void BCD_to_RTC(RTC * rtctime)
 int main ()
 {
     gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
-    ptmSysmInit();
     PrintConsole topScreen, bottomScreen;
     consoleInit(GFX_TOP, &topScreen);
     consoleInit(GFX_BOTTOM, &bottomScreen);
@@ -236,29 +235,14 @@ int main ()
         
         if(kDown & KEY_A) //Allows the user to save the changes.
         {
-            printf("\n\nIn order for the changes to take place, you must restart your console.\n");
-            printf("Are you sure you want to continue?\n");
-            printf("\x1b[32mSTART Button: Yes!\x1b[0m \n");
-            printf("\x1b[31mB Button: Exit the application.\x1b[0m");
+            RTC_to_BCD(&rtctime);
+            ret = mcuWriteRegister(0x30, &rtctime, UNITS_AMOUNT);
+            BCD_to_RTC(&rtctime);
             
-            if(kDown & KEY_START)
-            {
-                RTC_to_BCD(&rtctime);
-                ret = mcuWriteRegister(0x30, &rtctime, UNITS_AMOUNT);
-                BCD_to_RTC(&rtctime);
-                
-                mcuExit();
-                gfxExit();
-                
-                PTMSYSM_ShutdownAsync(0);
-                ptmSysmExit();
-            }
-            if(kDown & KEY_B)
-            {
-                mcuExit();
-                gfxExit();
-                break;
-            }
+            mcuExit();
+            gfxExit();
+            
+            APT_HardwareResetAsync();
         }
         
         setMaxDayValue(&rtctime);
