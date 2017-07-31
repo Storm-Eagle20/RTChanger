@@ -34,7 +34,7 @@ https://github.com/fincs/new-hbmenu/releases
 
 # **You must patch Service Manager to use the .3DSX version. This means that Arm9LoaderHax users MUST use the .CIA version.**
 
-Open Rosalina [`L+Down+Select`], go to `Process patches menu`, and select `Patch SM for service checks.` You CANNOT use the .3DSX version of RTChanger without doing this first. The .CIA version doesn't require this, however.
+Open Rosalina [`L+Down+Select`], go to `Process patches menu`, and select `Patch SM for service checks.` You CANNOT use the .3DSX version of RTChanger without doing this first. The .CIA version doesn't require this, however. Unfortunately, the patch to SM is not permanent, meaning you must patch it every time you wish to use RTChanger. 
 
 While you can use any entrypoint you like, here is the release page for the HBLauncher_Loader .CIA, which will allow you to access userland to boot up the .3DSX if you don't have access to any other entrypoint.
 
