@@ -84,6 +84,10 @@ A: I plan on it. I hope to release this to as many people as I can. I genuinely 
 
 ---
 
+Q: I would like to build this. What folder should I build?
+
+A: Don't build the RTChanger-CIA folder. I need to delete that but I'll do it soon, probably in a few days from this edit.
+
 Q: Will there be any updates to this?
 
 A: I don't honestly see the point of updating this once it's released. Unless a critical bug arises, there's really nothing else to be done with this application in particular.
