@@ -92,70 +92,51 @@ const u8 minValue[] = {
     0
 };
 
-void setMaxDayValue(RTC rtctime)
+void setMaxDayValue(RTC * rtctime)
 {
-    int year = rtctime.year+2000;
+    int year = rtctime->year+2000;
     int maxDayValue = 30;
     
     //30, 31, 30 gets shifted after August.
-    maxDayValue += (rtctime.month % 2) ^ (rtctime.month >= 8);
+    maxDayValue += (rtctime->month % 2) ^ (rtctime->month >= 8);
     
     //Accounts for leap years and February.
-    if(rtctime.month == 2)
+    if(rtctime->month == 2)
     {
         maxDayValue -= 2;
-        if (year % 4 == 0)
+        if(year % 4 == 0)
         {
-            if (year % 100 == 0)
+            if(year % 100 == 0)
             {
-                if (year % 400 == 0) maxDayValue++;
+                if(year % 400 == 0) maxDayValue++;
             }
             else maxDayValue++;
         }
     }
-    
+    u8 previousMax = maxValue[DAY_OFFSET]-1;
     maxValue[DAY_OFFSET] = maxDayValue+1;
+    if(rtctime->day == previousMax) rtctime->day = maxDayValue;
 }
 
-void handleOverflow(RTC * rtctime)
+void RTC_to_BCD(RTC * rtctime)
 {
     u8 * bufs = (u8*)rtctime;
-    for(int i = 0; i < UNITS_AMOUNT; i++)
+    for (int i = 0; i < UNITS_AMOUNT; i++)
     {
-        if(bufs[i] >= maxValue[i] && i+1 < UNITS_AMOUNT)
-        {
-            if(i == UNUSED_OFFSET) continue;
-            bufs[i] = minValue[i];
-            int offset = 1;
-            if (i+offset == UNUSED_OFFSET) offset++;
-            bufs[i+offset]++;
-        }
+        u8 units = bufs[i] % 10;
+        u8 tens = (bufs[i] - units) / 10;
+        bufs[i] = (tens << 4) | units;
     }
 }
 
-void changeRTCValue(RTC * rtctime, int offset, int change)
+void BCD_to_RTC(RTC * rtctime)
 {
     u8 * bufs = (u8*)rtctime;
-    bufs[offset] += change;
-    if(bufs[offset] < minValue[offset] || bufs[offset] > maxValue[offset])
-        bufs[offset] = maxValue[offset]-1;
-}
-
-void BCDtoByte(u8 * BCD, u8 * Byte)
-{
     for (int i = 0; i < UNITS_AMOUNT; i++)
     {
-        Byte[i] = (BCD[i] & 0xF) + (10 * (BCD[i] >> 4));
-    }
-}
-
-void ByteToBCD(u8 * Byte, u8 * BCD)
-{
-    for (int i = 0; i < UNITS_AMOUNT; i++)
-    {
-        int units = Byte[i] % 10;
-        int tens = (Byte[i] - units)/10;
-        BCD[i] = (tens << 4 | units);
+        u8 units = bufs[i] & 0xF;
+        u8 tens = bufs[i] >> 4;
+        bufs[i] = (10 * tens) + units;
     }
 }
 
@@ -172,7 +153,7 @@ int main ()
         consoleSelect(&topScreen);
         printf("Failed to init MCU: %08X\n", res);
         puts("This .3DSX was likely opened without \nLuma3DS or a SM patch.");
-        puts("\x1b[30;41mYou cannot use this application without Luma3DS and Boot9Strap.\x1b[0m");
+        puts("\x1b[30;41mYou cannot use the .3DSX without Luma3DS and Boot9Strap.\x1b[0m");
         puts("If you have Luma3DS 8.0 and up, just \nignore the above message and patch SM.  Restart the application afterwards.");
         puts("If you are confused, please visit my \nGitHub and view the README.\n \n \n");
         puts("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
@@ -199,10 +180,9 @@ int main ()
     
     RTC mcurtc;
     RTC rtc;
-    u8 bcdRTC[UNITS_AMOUNT] = {0};
     mcuReadRegister(0x30, bcdRTC, UNITS_AMOUNT);
     RTC rtctime = {0};
-    BCDtoByte(bcdRTC, (u8*)&rtctime);
+    BCD_to_RTC(&rtctime);
     
     memset(&rtctime, 0, 7);
     rtctime.year = 1;
@@ -213,7 +193,7 @@ int main ()
     u32 kHeld = 0;
     u32 kUp = 0;
     
-    u8* buf = &rtctime;
+    u8 * bufs = (u8*)&rtctime;
     int offs = 0;
     
     while (aptMainLoop()) //Detects the user input.
@@ -223,149 +203,34 @@ int main ()
         kHeld = hidKeysHeld();        //Detects if the A button was held.
         kUp = hidKeysUp();            //Detects if the A button was just released.
         
-        printf("20%02X/%02X/%02X %02X:%02X:%02X\n", rtc.year, rtc.month, rtc.day, rtc.hour, rtc.minute, rtc.seconds);
+        printf("\x1b[0;0H");
+        printf("YYYY/MM/DD    HH:mm:SS\n");
+        printf("%4.4u/%2.2u/%2.2u    %2.2u:%2.2u:%2.2u\n", rtctime.year+2000, rtctime.month, rtctime.day, rtctime.hour, rtctime.minute, rtctime.seconds);
         printf("%*s\e[0K\e[1A\e[99D", cursorOffset[offs], "^^"); //Displays the cursor and time.
         
         if(kHeld & KEY_START) break;  //User can choose to continue or return to the Home Menu.  
         
         if(kDown & (KEY_UP))          //Detects if the UP D-PAD button was pressed.
         {
-            buf[offs]++; //Makes an offset increasing the original value by one.
-            switch(offs)
-            {   
-                case 0:  //Seconds.
-                case 1:  //Minutes.
-                    if(buf[offs] == 0x60) buf[offs] = 0;
-                    break;
-                    
-                case 2:  //Hours.
-                    if(buf[offs] == 0x24) buf[offs] = 0;
-                    break;
-                    
-                case 4:  //Days.
-                    if(buf[5] == 0x01 || buf[5] == 0x03 || buf[5] == 0x05 || buf[5] == 0x07 || buf[5] == 0x08 || buf[5] == 0x10 || buf[5] == 0x12) //Checks if the month is set to January, March, May, July, August, October, or December.
-                    {
-                        if(buf[offs] == 0x32) buf[offs] = 0x01;
-                    }
-                    if(buf[5] == 0x04 || buf[5] == 0x06 || buf[5] == 0x09 || buf[5] == 0x11) //Checks if the month is set to April, June, September, or November.
-                    {
-                        if(buf[offs] == 0x31) buf[offs] = 0x01;
-                    }
-                    if(buf[5] == 0x02)  //Checks if the month is set to February.
-                    {
-                        if(buf[6] % 4 == 0)  //Checks if it's a leap year.
-                        {
-                            if(buf[offs] == 0x30) buf[offs] = 0x01;
-                        }
-                        else if(buf[offs] == 0x29) buf[offs] = 0x01; //If it's not a leap year.
-                    }
-                    break;
-                    
-                case 5:  //Month.
-                    if(buf[offs] == 0x13) buf[offs] = 0x01;
-                    //If the user has the days at 30 or 31 (and 29 if not a leap year) and switches the month to February for example,
-                    //RTChanger will change the days accordingly.
-                    if(buf[offs] == 0x02) 
-                    {
-                        if(buf[6] % 4 == 0)
-                        {
-                            if(buf[4] == 0x30 || buf[4] == 0x31) buf[4] = 0x29;
-                        }
-                        else if(buf[4] == 0x29 || buf[4] == 0x30 || buf[4] == 0x31) buf[4] = 0x28;
-                    }
-                    
-                    if(buf[offs] == 0x04 || buf[offs] == 0x06 || buf[offs] == 0x09 || buf[5] == 0x11)
-                    {
-                        if(buf[4] == 0x31) buf[4] = 0x30;
-                    }
-                    break;
-                    
-                case 6:  //Year.
-                    if(buf[offs] == 0x51) buf[offs] = 0x01;
-                    //Checks if the year is changed to a non-leap year and sets February 29th accordingly.
-                    if(buf[offs] % 4 != 0)
-                    {
-                        if(buf[5] == 0x02)
-                        {
-                            if(buf[4] == 0x29) buf[4] = 0x28;
-                        }
-                    }
-                    break;
-            }
+            bufs[offs]++;
+            if(bufs[offs] == maxValue[offs]) bufs[offs] = minValue[offs];
         }
         if(kDown & (KEY_DOWN)) //Detects if the DOWN D-PAD button was pressed.
         {
-            buf[offs]--; //Makes an offset decreasing the original value by one.
-            switch(offs)
-            {
-                case 0:  //Seconds.
-                case 1:  //Minutes.
-                    if(buf[offs] == 0xFF) buf[offs] = 0x59;
-                    break;
-                    
-                case 2:  //Hours.
-                    if(buf[offs] == 0xFF) buf[offs] = 0x23;
-                    break;
-                    
-                case 4:  //Days.
-                    if(buf[5] == 0x01 || buf[5] == 0x03 || buf[5] == 0x05 || buf[5] == 0x07 || buf[5] == 0x08 || buf[5] == 0x10 || buf[5] == 0x12) //Checks if the month is set to January, March, May, July, August, October, or December.
-                    {
-                        if(buf[offs] == 0x00) buf[offs] = 0x31;
-                    }
-                    if(buf[5] == 0x04 || buf[5] == 0x06 || buf[5] == 0x09 || buf[5] == 0x11) //Checks if the month is set to April, June, September, or November.
-                    {
-                        if(buf[offs] == 0x00) buf[offs] = 0x30;
-                    }
-                    if(buf[5] == 0x02)  //Checks if the month is set to February.
-                    {
-                        if(buf[6] % 4 == 0)  //Checks if it's a leap year.
-                        {
-                            if(buf[offs] == 0x00) buf[offs] = 0x29;
-                        }
-                        else if(buf[offs] == 0x00) buf[offs] = 0x28; //If it's not a leap year.
-                    }
-                    break;
-                    
-                case 5:  //Month.
-                    if(buf[offs] == 0x00) buf[offs] = 0x12;
-                    
-                    if(buf[offs] == 0x02) 
-                    {
-                        if(buf[6] % 4 == 0)
-                        {
-                            if(buf[4] == 0x2A || buf[4] == 0x31) buf[4] = 0x29;
-                        }
-                        else if(buf[4] == 0x29 || buf[4] == 0x2A || buf[4] == 0x31) buf[4] = 0x28;
-                    }
-                    
-                    if(buf[offs] == 0x04 || buf[offs] == 0x06 || buf[offs] == 0x09 || buf[5] == 0x11)
-                    {
-                        if(buf[4] == 0x31) buf[4] = 0x29;
-                    }
-                    break;
-                    
-                case 6:  //Year.
-                    if(buf[offs] == 0x00) buf[offs] = 0x50;
-                    //Checks if the year is changed to a non-leap year and changes February 29th accordingly.
-                    if(buf[offs] % 4 != 0)
-                    {
-                        if(buf[5] == 0x02)
-                        {
-                            if(buf[4] == 0x29) buf[4] = 0x28;
-                        }
-                    }
-                    break;
-            }
+            bufs[offs]--;
+            if(bufs[offs] < minValue[offs] || bufs[offs] >= maxValue[offs]) bufs[offs] = maxValue[offs]-1;
         }
         if(kDown & KEY_LEFT) //Detects if the left button was pressed.
         {
-            if(offs == 2) offs = 4;
-            else if(offs < 6) offs++;
+            offs++;
+            if(offs == UNUSED_OFFSET) offs++;
+            if(offs > YEAR_OFFSET) offs = SECONDS_OFFSET;
         }
         if(kDown & KEY_RIGHT) //Detects if the right buttn was pressed.
         {
-            if(offs == 4) offs = 2;
-            else if(offs) offs--;
+            offs--;
+            if(offs == UNUSED_OFFSET) offs--;
+            if(offs < SECONDS_OFFSET) offs = YEAR_OFFSET;
         }
         
         if(kDown & KEY_A) //Allows the user to save the changes. Not implemented yet.
@@ -374,8 +239,6 @@ int main ()
             mcuWriteRegister(0x30, bcdRTC, UNITS_AMOUNT);
         }
         
-        setMaxDayValue(rtctime);
-        handleOverflow(&rtctime);
         setMaxDayValue(rtctime);
         
         gfxFlushBuffers();
