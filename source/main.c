@@ -249,6 +249,7 @@ int main ()
                 mcuExit();
                 gfxExit();
                 
+                ptmSysmInit();
                 PTMSYSM_ShutdownAsync(0);
                 ptmSysmExit();
             }
