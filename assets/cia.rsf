@@ -227,8 +227,8 @@ AccessControlInfo:
    - ir:rst
    - ir:u
    - ir:USER
-   - mic:u
    - mcu::HWC
+   - mic:u
    - ndm:u
    - news:s
    - nwm::UDS
