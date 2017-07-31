@@ -178,9 +178,7 @@ int main ()
     puts ("The format is year, month, day, then hours, \nminutes, and seconds.");
     puts ("When you are done setting the Raw RTC, press A to save the changes. \n");
     
-    RTC mcurtc;
-    RTC rtc;
-    RTC rtctime = {mcurtc};
+    RTC rtctime = {0};
     mcuReadRegister(0x30, &rtctime, UNITS_AMOUNT);
     BCD_to_RTC(&rtctime);
     
@@ -204,7 +202,7 @@ int main ()
         kUp = hidKeysUp();            //Detects if the A button was just released.
         
         printf("\x1b[0;0H");
-        printf("\n\n\n\n\n\n\n%4.4u/%2.2u/%2.2u %2.2u:%2.2u:%2.2u\n", rtctime.year+2000, rtctime.month, rtctime.day, rtctime.hour, rtctime.minute, rtctime.seconds);
+        printf("\n\n\n\n\n\n\n\n%4.4u/%2.2u/%2.2u %2.2u:%2.2u:%2.2u\n", rtctime.year+2000, rtctime.month, rtctime.day, rtctime.hour, rtctime.minute, rtctime.seconds);
         printf("%*s\e[0K\e[1A\e[99D", cursorOffset[offs], "^^"); //Displays the cursor and time.
         
         if(kHeld & KEY_START) break;  //User can choose to continue or return to the Home Menu.  
@@ -234,9 +232,9 @@ int main ()
         
         if(kDown & KEY_A) //Allows the user to save the changes. Not implemented yet.
         {
-                RTC_to_BCD(&rtctime);
-                ret = mcuWriteRegister(0x30, &rtctime, UNITS_AMOUNT);
-                BCD_to_RTC(&rtctime);
+            RTC_to_BCD(&rtctime);
+            ret = mcuWriteRegister(0x30, &rtctime, UNITS_AMOUNT);
+            BCD_to_RTC(&rtctime);
         }
         
         setMaxDayValue(&rtctime);
