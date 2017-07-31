@@ -62,6 +62,8 @@ Q: This involves the MCU. Is this safe?
 
 A: Yes. What you may have heard was that changing the color of the LED can brick the MCU, but that was not true as the brick yellows8 got was a NAND brick.
 
+**I have also made sure to fully test both the .3DSX and .CIA versions on my own 3DS by myself.** I wouldn't ask others to do something like that.
+
 ---
 
 Q: Does this affect my regular system time?
