@@ -154,6 +154,7 @@ void BCD_to_RTC(RTC * rtctime)
 int main ()
 {
     gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
+    ptmSysmInit();
     PrintConsole topScreen, bottomScreen;
     consoleInit(GFX_TOP, &topScreen);
     consoleInit(GFX_BOTTOM, &bottomScreen);
@@ -249,7 +250,6 @@ int main ()
                 mcuExit();
                 gfxExit();
                 
-                ptmSysmInit();
                 PTMSYSM_ShutdownAsync(0);
                 ptmSysmExit();
             }
