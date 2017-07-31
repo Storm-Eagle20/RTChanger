@@ -32,7 +32,7 @@ If you're unfamiliar with .3DSX files, you'll need fincs' Homebrew Launcher 2.0.
 
 https://github.com/fincs/new-hbmenu/releases
 
-# **You must patch Service Manager to use the .3DSX version.**
+# **You must patch Service Manager to use the .3DSX version. This means that Arm9LoaderHax users MUST use the .CIA version.**
 
 Open Rosalina [`L+Down+Select`], go to `Process patches menu`, and select `Patch SM for service checks.` You CANNOT use the .3DSX version of RTChanger without doing this first. The .CIA version doesn't require this, however.
 
