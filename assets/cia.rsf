@@ -228,6 +228,7 @@ AccessControlInfo:
    - ir:u
    - ir:USER
    - mic:u
+   - mcu::HWC
    - ndm:u
    - news:s
    - nwm::UDS
