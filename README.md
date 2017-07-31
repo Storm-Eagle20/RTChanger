@@ -78,15 +78,11 @@ A: Yes! Feel free to share it to friends, but I recommend you send them to the G
 
 ---
 
-Q: Will this be shared on GBATemp?
-
-A: I plan on it. I hope to release this to as many people as I can. I genuinely hope RTChanger will catch on in the community.
-
----
-
 Q: I would like to build this. What folder should I build?
 
 A: Don't build the RTChanger-CIA folder. I need to delete that but I'll do it soon, probably in a few days from this edit.
+
+---
 
 Q: Will there be any updates to this?
 
