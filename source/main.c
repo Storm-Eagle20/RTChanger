@@ -154,6 +154,7 @@ void BCD_to_RTC(RTC * rtctime)
 int main ()
 {
     gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
+    nsInit();
     PrintConsole topScreen, bottomScreen;
     consoleInit(GFX_TOP, &topScreen);
     consoleInit(GFX_BOTTOM, &bottomScreen);
@@ -163,7 +164,11 @@ int main ()
     {
         consoleSelect(&topScreen);
         printf("Failed to init MCU: %08X\n", ret);
-        puts("If this error persists, use Rosalina to patch\n Service Manager.\n");
+        puts("This .3DSX was likely opened without \nLuma3DS or a SM patch.");
+        puts("\x1b[30;41mYou cannot use the .3DSX without Luma3DS and Boot9Strap.\x1b[0m");
+        puts("If you have Luma3DS 8.0 and up, just \nignore the above message and patch SM.  Restart the application afterwards.");
+        puts("If you are confused, please visit my \nGitHub and view the README.\n \n \n");
+        puts("\x1b[36mhttps://www.github.com/Storm-Eagle20/RTChanger\x1b[0m");
         mcuFailure();
         return -1;
     }
@@ -184,7 +189,8 @@ int main ()
     puts ("Here you can change your time. Changing backwards is not recommended.");
     puts ("Change your time by however you may need.");
     puts ("The format is year, month, day, then hours, \nminutes, and seconds.");
-    puts ("When you are done setting the Raw RTC, press A to save the changes. \n");
+    puts ("When you are done setting the Raw RTC, press A to save the changes.\n");
+    puts ("\x1b[32mHey! Are you looking to do RNG \nmanipulation? Press X to save the changes instead!\x1b[0m");
     
     RTC rtctime = {0};
     mcuReadRegister(0x30, &rtctime, UNITS_AMOUNT);
@@ -205,7 +211,7 @@ int main ()
         kUp = hidKeysUp();            //Detects if the A button was just released.
         
         printf("\x1b[0;0H");
-        printf("\n\n\n\n\n\n\n\n%4.4u/%2.2u/%2.2u %2.2u:%2.2u:%2.2u\n", rtctime.year+2000, rtctime.month, rtctime.day, rtctime.hour, rtctime.minute, rtctime.seconds);
+        printf("\n\n\n\n\n\n\n\n\n\n%4.4u/%2.2u/%2.2u %2.2u:%2.2u:%2.2u\n", rtctime.year+2000, rtctime.month, rtctime.day, rtctime.hour, rtctime.minute, rtctime.seconds);
         printf("%*s\e[0K\e[1A\e[99D", cursorOffset[offs], "^^"); //Displays the cursor and time.
         
         if(kHeld & KEY_START) break;  //User can choose to continue or return to the Home Menu.  
@@ -241,10 +247,23 @@ int main ()
             
             mcuExit();
             gfxExit();
+            nsExit();
             
             APT_HardwareResetAsync();
         }
         
+        if(kDown & KEY_X)
+        {
+            RTC_to_BCD(&rtctime);
+            ret = mcuWriteRegister(0x30, &rtctime, UNITS_AMOUNT);
+            BCD_to_RTC(&rtctime);
+            
+            NS_RebootToTitle(MEDIATYPE_SD, 0x000400000EB00000);
+            
+            mcuExit();
+            nsExit();
+            gfxExit();
+        }
         setMaxDayValue(&rtctime);
         
         gfxFlushBuffers();
