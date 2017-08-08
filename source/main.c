@@ -16,7 +16,7 @@ enum {
     YEAR_OFFSET
 };
 
-typedef struct  
+typedef struct
 {
     u8 seconds;
     u8 minute;
@@ -26,6 +26,23 @@ typedef struct
     u8 month;
     u8 year;
 } RTC;
+
+struct pokemonGame
+{
+    int pokeX;
+    int pokeY;
+    int omegaRuby;
+    int alphaSapphire;
+    int sun;
+    int moon;
+    
+    char PkmX;
+    char PkmY;
+    char OR;
+    char AS;
+    char Sun;
+    char Moon;
+};
 
 const int offsNext[] = {
     1,
@@ -154,7 +171,6 @@ void BCD_to_RTC(RTC * rtctime)
 int main ()
 {
     gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
-    nsInit();
     PrintConsole topScreen, bottomScreen;
     consoleInit(GFX_TOP, &topScreen);
     consoleInit(GFX_BOTTOM, &bottomScreen);
@@ -192,6 +208,9 @@ int main ()
     puts ("When you are done setting the Raw RTC, press A to save the changes.\n");
     puts ("\x1b[32mHey! Are you looking to do RNG \nmanipulation? Press X to save the changes instead!\x1b[0m");
     
+    u8 param[0x300];
+    u8 hmac[0x20];
+    
     RTC rtctime = {0};
     mcuReadRegister(0x30, &rtctime, UNITS_AMOUNT);
     BCD_to_RTC(&rtctime);
@@ -202,6 +221,13 @@ int main ()
     
     u8 * bufs = (u8*)&rtctime;
     int offs = 0;
+    
+    int pokeX = 0x0004000000055D00;
+    int pokeY = 0x0004000000055E00;
+    int omegaRuby = 0x000400000011C400;
+    int alphaSapphire = 0x000400000011C500;
+    int sun = 0x0004000000164800;
+    int moon = 0x0004000000175E00;
     
     while (aptMainLoop()) //Detects the user input.
     {
@@ -247,22 +273,75 @@ int main ()
             
             mcuExit();
             gfxExit();
-            nsExit();
             
             APT_HardwareResetAsync();
         }
         
         if(kDown & KEY_X)
         {
-            RTC_to_BCD(&rtctime);
-            ret = mcuWriteRegister(0x30, &rtctime, UNITS_AMOUNT);
-            BCD_to_RTC(&rtctime);
-            
-            NS_RebootToTitle(MEDIATYPE_SD, 0x000400000EB00000);
-            
-            mcuExit();
-            nsExit();
-            gfxExit();
+            while (aptMainLoop())
+            {
+                puts("What Pokemon game are you trying\nto do RNG manipulation on?");
+                puts("If you have cartridge, press\n X to save the time and start.");
+                puts("Otherwise, select your game\n below if you use digital. You can press \nSTART to exit as well.");
+                printf("\n%c %c %c %c %c %c\n" PkmX, PkmY, OR, AS, Sun, Moon);
+                printf("%*s\e[0K\e[1A\e[99D", cursorOffset[offs], "^^");
+                
+                if(kDown & KEY_START) break;
+                
+                if(kDown & KEY_X)
+                {
+                    memset(param, 0, sizeof(param));
+                    memset(hmac, 0, sizeof(hmac));
+                    
+                    u16 lasttick = 0;
+                    u16 tick = 0;
+                    do
+                    {
+                        lasttick = tick;
+                        mcuReadRegister(0x3D, &tick, 2);
+                    }
+                    while(lasttick < tick);
+                    
+                    APT_PrepareToDoApplicationJump(0, 0, MEDIATYPE_GAME_CARD);
+                    
+                    RTC_to_BCD(&rtctime);
+                    ret = mcuReadRegister(0x30, &rtctime, UNITS_AMOUNT);
+                    ret = mcuWriteRegister(0x30, &rtctime, UNITS_AMOUNT);
+                    BCD_to_RTC(&rtctime);
+                    
+                    mcuExit();
+                    gfxExit();
+                    
+                    APT_DoApplicationJump(param, sizeof(param), hmac);
+                }
+                
+                if(kDown & KEY_A)
+                {
+                    memset(param, 0, sizeof(param));
+                    memset(hmac, 0, sizeof(hmac));
+                    
+                    u16 lasttick = 0;
+                    u16 tick = 0;
+                    do
+                    {
+                        lasttick = tick;
+                        mcuReadRegister(0x3D, &tick, 2);
+                    }
+                    while(lasttick < tick);
+                    
+                    APT_PrepareToDoApplicationJump(0, 0, MEDIATYPE_GAME_CARD);
+                    
+                    RTC_to_BCD(&rtctime);
+                    ret = mcuReadRegister(0x30, &rtctime, UNITS_AMOUNT);
+                    ret = mcuWriteRegister(0x30, &rtctime, UNITS_AMOUNT);
+                    BCD_to_RTC(&rtctime);
+                    
+                    mcuExit();
+                    gfxExit();
+                    
+                    APT_DoApplicationJump(param, sizeof(param), hmac);
+            }
         }
         setMaxDayValue(&rtctime);
         
