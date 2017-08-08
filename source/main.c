@@ -20,8 +20,8 @@ typedef enum game
 {
     PkmX,
     PkmY,
-    OR,
-    AS,
+    PkmnOR,
+    PkmnAS,
     Sun,
     Moon
 } pokemonGame;
@@ -224,7 +224,7 @@ int main ()
     u8 * bufs = (u8*)&rtctime;
     int offs = 0;
     
-    int pokemonGame = 0;
+    int pokemonGame game = 0;
     
     while (aptMainLoop()) //Detects the user input.
     {
@@ -268,8 +268,7 @@ int main ()
             ret = mcuWriteRegister(0x30, &rtctime, UNITS_AMOUNT);
             BCD_to_RTC(&rtctime);
             
-            mcuExit();
-            gfxExit();
+            deinitServices();
             
             APT_HardwareResetAsync();
         }
@@ -281,7 +280,7 @@ int main ()
                 puts("What Pokemon game are you trying\nto do RNG manipulation on?");
                 puts("If you have cartridge, press\n X to save the time and start.");
                 puts("Otherwise, select your game\n below if you use digital. You can press \nSTART to exit as well.");
-                printf("\n%c %c %c %c %c %c\n" PkmX, PkmY, OR, AS, Sun, Moon);
+                printf("\nPkmX, PkmY, OR, AS, Sun, Moon\n");
                 printf("%*s\e[0K\e[1A\e[99D", cursorOffsettwo[pokemonGame], "^^");
                 
                 if(kDown & KEY_START) break;
@@ -315,13 +314,13 @@ int main ()
                 
                 if(kDown & KEY_LEFT)
                 {
-                    pokemonGame++
+                    pokemonGame++;
                     if(pokemonGame > Moon) pokemonGame = PkmX;
                 }
                 
                 if(kDown & KEY_RIGHT)
                 {
-                    pokemonGame--
+                    pokemonGame--;
                     if(pokemonGame < PkmX) pokemonGame = Moon;
                 }
                 
@@ -330,7 +329,30 @@ int main ()
                     memset(param, 0, sizeof(param));
                     memset(hmac, 0, sizeof(hmac));
                     
-                    APT_PrepareToDoApplicationJump(0, 0, MEDIATYPE_GAME_CARD);
+                    if(pokemonGame == PkmX)
+                    {
+                        APT_PrepareToDoApplicationJump(0, 0x0004000000055D00, MEDIATYPE_SD);
+                    }
+                    else if(pokemonGame == PkmY)
+                    {
+                        APT_PrepareToDoApplicationJump(0, 0x0004000000055E00, MEDIATYPE_SD);
+                    }
+                    else if(pokemonGame == PkmnOR)
+                    {
+                        APT_PrepareToDoApplicationJump(0, 0x000400000011C400, MEDIATYPE_SD);
+                    }
+                    else if(pokemonGame == PkmnAS)
+                    {
+                        APT_PrepareToDoApplicationJump(0, 0x000400000011C500, MEDIATYPE_SD);
+                    }
+                    else if(pokemonGame == Sun);
+                    {
+                        APT_PrepareToDoApplicationJump(0, 0x0004000000164800, MEDIATYPE_SD);
+                    }
+                    else if(pokemonGame == Moon);
+                    {
+                        APT_PrepareToDoApplicationJump(0, 0x0004000000175E00, MEDIATYPE_SD);
+                    }
                     
                     RTC_to_BCD(&rtctime);
                     ret = mcuReadRegister(0x30, &rtctime, UNITS_AMOUNT);
@@ -346,8 +368,7 @@ int main ()
                     }
                     while(lasttick < tick);
                     
-                    mcuExit();
-                    gfxExit();
+                    deinitServices();
                     
                     APT_DoApplicationJump(param, sizeof(param), hmac);
                 }
