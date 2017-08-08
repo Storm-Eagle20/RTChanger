@@ -191,7 +191,7 @@ int main ()
         return -1;
     }
     
-    puts ("\x1b[35m-\x1b[0m\x1b[31m-\x1b[0m\x1b[33m-\x1b[0m       \x1b[32mRTChanger Version1.0\x1b[0m       \x1b[35m-\x1b[0m\x1b[31m-\x1b[0m\x1b[33m-\x1b[0m");
+    puts ("\x1b[35m-\x1b[0m\x1b[31m-\x1b[0m\x1b[33m-\x1b[0m       \x1b[32mRTChanger Version1.1\x1b[0m       \x1b[35m-\x1b[0m\x1b[31m-\x1b[0m\x1b[33m-\x1b[0m");
     puts ("Welcome to RTChanger! \n"); //Notifications to user after booting RTChanger.
     puts ("Using this program, you can manually\nchange the Raw RTC.");
     puts ("The Raw RTC is your hidden System Clock.Editing this allows you to bypass       timegates.");
@@ -224,7 +224,7 @@ int main ()
     u8 * bufs = (u8*)&rtctime;
     int offs = 0;
     
-    u8 * offstwo 
+    int pokemonGame = 0;
     
     while (aptMainLoop()) //Detects the user input.
     {
@@ -282,7 +282,7 @@ int main ()
                 puts("If you have cartridge, press\n X to save the time and start.");
                 puts("Otherwise, select your game\n below if you use digital. You can press \nSTART to exit as well.");
                 printf("\n%c %c %c %c %c %c\n" PkmX, PkmY, OR, AS, Sun, Moon);
-                printf("%*s\e[0K\e[1A\e[99D", cursorOffsettwo[offs], "^^");
+                printf("%*s\e[0K\e[1A\e[99D", cursorOffsettwo[pokemonGame], "^^");
                 
                 if(kDown & KEY_START) break;
                 
@@ -316,11 +316,13 @@ int main ()
                 if(kDown & KEY_LEFT)
                 {
                     pokemonGame++
+                    if(pokemonGame > PkmX) pokemonGame = Moon;
                 }
                 
                 if(kDown & KEY_RIGHT)
                 {
                     pokemonGame--
+                    if(pokemonGame < Moon) pokemonGame = PkmX;
                 }
                 
                 if(kDown & KEY_A)
