@@ -16,6 +16,16 @@ enum {
     YEAR_OFFSET
 };
 
+typedef enum game
+{
+    PkmX,
+    PkmY,
+    OR,
+    AS,
+    Sun,
+    Moon
+} pokemonGame;
+
 typedef struct
 {
     u8 seconds;
@@ -26,16 +36,6 @@ typedef struct
     u8 month;
     u8 year;
 } RTC;
-
-struct
-{
-    char PkmX;
-    char PkmY;
-    char OR;
-    char AS;
-    char Sun;
-    char Moon;
-} pokemonGame;
 
 const int offsNext[] = {
     1,
@@ -316,13 +316,13 @@ int main ()
                 if(kDown & KEY_LEFT)
                 {
                     pokemonGame++
-                    if(pokemonGame > PkmX) pokemonGame = Moon;
+                    if(pokemonGame > Moon) pokemonGame = PkmX;
                 }
                 
                 if(kDown & KEY_RIGHT)
                 {
                     pokemonGame--
-                    if(pokemonGame < Moon) pokemonGame = PkmX;
+                    if(pokemonGame < PkmX) pokemonGame = Moon;
                 }
                 
                 if(kDown & KEY_A)
