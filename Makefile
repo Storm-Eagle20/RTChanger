@@ -15,7 +15,7 @@ BUILD		:= build
 SOURCES		:= source
 DATA		:= data
 INCLUDES	:= inc
-ROMFS		:= $(TOPDIR)/assets/ROMFS
+ROMFS		:=
 APP_TITLE       := RTChanger
 APP_DESCRIPTION := A tool which can change the Raw RTC to bypass timegates!
 APP_AUTHOR      := /u/X-The-Komujin
@@ -173,7 +173,7 @@ $(CURDIR)/_strip.elf: $(OUTPUT).elf
 	@$(PREFIX)strip $(CURDIR)/_strip.elf
 
 $(OUTPUT).cia: $(CURDIR)/_strip.elf $(CURDIR)/_banner.bin $(CURDIR)/_smdh.bin
-	@makerom -f cia -o $(OUTPUT).cia -rsf $(TOPDIR)/assets/cia.rsf -target t -exefslogo -elf $(CURDIR)/_strip.elf -icon $(CURDIR)/_smdh.bin -banner $(CURDIR)/_banner.bin -DAPP_TITLE="$(APP_TITLE)" -DAPP_PRODUCT_CODE="$(APP_PRODUCT_CODE)" -DAPP_UNIQUE_ID="$(APP_UNIQUE_ID)" -DAPP_ROMFS="$(ROMFS)"
+	@makerom -f cia -o $(OUTPUT).cia -rsf $(TOPDIR)/assets/cia.rsf -target t -exefslogo -elf $(CURDIR)/_strip.elf -icon $(CURDIR)/_smdh.bin -banner $(CURDIR)/_banner.bin -DAPP_TITLE="$(APP_TITLE)" -DAPP_PRODUCT_CODE="$(APP_PRODUCT_CODE)" -DAPP_UNIQUE_ID="$(APP_UNIQUE_ID)"
 	@echo "built ... $(notdir $@)"
 
 #---------------------------------------------------------------------------------
