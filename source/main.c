@@ -16,7 +16,7 @@ enum {
     YEAR_OFFSET
 };
 
-typedef enum game
+typedef enum
 {
     PkmX,
     PkmY,
@@ -131,7 +131,7 @@ Result initServices(PrintConsole topScreen){ //Initializes the services.
 void deinitServices(){
      mcuExit();
      gfxExit();
- }
+}
 
 void mcuFailure(){
     printf("\n\nPress any key to exit...");
@@ -224,7 +224,7 @@ int main ()
     u8 * bufs = (u8*)&rtctime;
     int offs = 0;
     
-    int pokemonGame game = 0;
+    int pokemonGame = 0;
     
     while (aptMainLoop()) //Detects the user input.
     {
@@ -275,40 +275,32 @@ int main ()
         
         if(kDown & KEY_X)
         {
+            puts("\n\nWhat Pokemon game are you trying\nto do RNG manipulation on?");
+            puts("If you have a cartridge, press\nY to save the time and start.");
+            puts("Otherwise, select your game\nbelow if you use digital. You can press \nSTART to exit as well.");
+            
             while (aptMainLoop())
             {
-                puts("What Pokemon game are you trying\nto do RNG manipulation on?");
-                puts("If you have cartridge, press\n X to save the time and start.");
-                puts("Otherwise, select your game\n below if you use digital. You can press \nSTART to exit as well.");
-                printf("\nPkmX, PkmY, OR, AS, Sun, Moon\n");
+                printf("\x1b[0;0H");
+                printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPkmX, PkmY, OR, AS, Sun, Moon\n");
                 printf("%*s\e[0K\e[1A\e[99D", cursorOffsettwo[pokemonGame], "^^");
                 
                 if(kDown & KEY_START) break;
                 
-                if(kDown & KEY_X)
+                if(kDown & KEY_Y)
                 {
                     memset(param, 0, sizeof(param));
                     memset(hmac, 0, sizeof(hmac));
-                    
-                    APT_PrepareToDoApplicationJump(0, 0, MEDIATYPE_GAME_CARD);
                     
                     RTC_to_BCD(&rtctime);
                     ret = mcuReadRegister(0x30, &rtctime, UNITS_AMOUNT);
                     ret = mcuWriteRegister(0x30, &rtctime, UNITS_AMOUNT);
                     BCD_to_RTC(&rtctime);
                     
-                    u16 lasttick = 0;
-                    u16 tick = 0;
-                    do
-                    {
-                        lasttick = tick;
-                        mcuReadRegister(0x3D, &tick, 2);
-                    }
-                    while(lasttick < tick);
-                    
                     mcuExit();
                     gfxExit();
                     
+                    APT_PrepareToDoApplicationJump(0, 0x0004000000164800, MEDIATYPE_GAME_CARD);
                     APT_DoApplicationJump(param, sizeof(param), hmac);
                 }
                 
@@ -323,7 +315,7 @@ int main ()
                     pokemonGame--;
                     if(pokemonGame < PkmX) pokemonGame = Moon;
                 }
-                
+                 
                 if(kDown & KEY_A)
                 {
                     memset(param, 0, sizeof(param));
@@ -345,11 +337,11 @@ int main ()
                     {
                         APT_PrepareToDoApplicationJump(0, 0x000400000011C500, MEDIATYPE_SD);
                     }
-                    else if(pokemonGame == Sun);
+                    else if(pokemonGame == Sun)
                     {
                         APT_PrepareToDoApplicationJump(0, 0x0004000000164800, MEDIATYPE_SD);
                     }
-                    else if(pokemonGame == Moon);
+                    else if(pokemonGame == Moon)
                     {
                         APT_PrepareToDoApplicationJump(0, 0x0004000000175E00, MEDIATYPE_SD);
                     }
@@ -358,15 +350,6 @@ int main ()
                     ret = mcuReadRegister(0x30, &rtctime, UNITS_AMOUNT);
                     ret = mcuWriteRegister(0x30, &rtctime, UNITS_AMOUNT);
                     BCD_to_RTC(&rtctime);
-                    
-                    u16 lasttick = 0;
-                    u16 tick = 0;
-                    do
-                    {
-                        lasttick = tick;
-                        mcuReadRegister(0x3D, &tick, 2);
-                    }
-                    while(lasttick < tick);
                     
                     deinitServices();
                     
@@ -381,8 +364,7 @@ int main ()
         gspWaitForVBlank();
     }
     
-    mcuExit();
-    gfxExit();
+    deinitServices();
     
     return 0;
 }
