@@ -18,12 +18,12 @@ enum {
 
 typedef enum
 {
-    PkmX = 3,
-    PkmY = 8,
-    PkmnOR = 12,
-    PkmnAS = 15,
-    Sun = 18,
-    Moon = 23
+    PkmX,
+    PkmY,
+    PkmnOR,
+    PkmnAS,
+    Sun,
+    Moon
 } pokemonGame;
 
 typedef struct
