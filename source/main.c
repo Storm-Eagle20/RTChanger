@@ -103,10 +103,8 @@ void setMaxDayValue(RTC * rtctime)
     if(rtctime->day == previousMax) rtctime->day = maxDayValue;
 }
 
-Result initServices(PrintConsole topScreen, PrintConsole bottomScreen){ //Initializes the services.
-    gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
+Result initServices(PrintConsole topScreen){ //Initializes the services.
     consoleInit(GFX_TOP, &topScreen);
-    consoleInit(GFX_BOTTOM, &bottomScreen);
     Result ret = mcuInit();
     return ret;
 }
@@ -155,13 +153,16 @@ void BCD_to_RTC(RTC * rtctime)
 
 int main ()
 {
+    gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false); //Inits both screens.
     PrintConsole topScreen, bottomScreen;
-    Result ret = initServices(topScreen, bottomScreen);
+    consoleInit(GFX_TOP, &topScreen);
+    consoleInit(GFX_BOTTOM, &bottomScreen);
     consoleSelect(&bottomScreen);
+    Result ret = mcuInit();
     if(R_FAILED(ret))
     {
         consoleSelect(&topScreen);
-        printf("Failed to init MCU: %08lX\n", ret);
+        printf("Failed to init MCU: %08X\n", ret);
         puts("If this error persists, use Rosalina to patch\n Service Manager.\n");
         mcuFailure();
         return -1;
@@ -191,6 +192,7 @@ int main ()
     
     u32 kDown = 0;
     u32 kHeld = 0;
+    u32 kUp = 0;
     
     u8 * bufs = (u8*)&rtctime;
     int offs = 0;
@@ -200,6 +202,7 @@ int main ()
         hidScanInput();               //Scans for input.
         kDown = hidKeysDown();        //Detects if the A button was pressed.
         kHeld = hidKeysHeld();        //Detects if the A button was held.
+        kUp = hidKeysUp();            //Detects if the A button was just released.
         
         printf("\x1b[0;0H");
         printf("\n\n\n\n\n\n\n\n%4.4u/%2.2u/%2.2u %2.2u:%2.2u:%2.2u\n", rtctime.year+2000, rtctime.month, rtctime.day, rtctime.hour, rtctime.minute, rtctime.seconds);
@@ -236,7 +239,8 @@ int main ()
             ret = mcuWriteRegister(0x30, &rtctime, UNITS_AMOUNT);
             BCD_to_RTC(&rtctime);
             
-            deinitServices();
+            mcuExit();
+            gfxExit();
             
             APT_HardwareResetAsync();
         }
@@ -248,7 +252,8 @@ int main ()
         gspWaitForVBlank();
     }
     
-    deinitServices();
+    mcuExit();
+    gfxExit();
     
     return 0;
 }
