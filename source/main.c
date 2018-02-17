@@ -292,6 +292,7 @@ int main ()
                 }
                 else{ break; }
             }
+            if(bufs[offs] == maxValue[offs]) bufs[offs] = minValue[offs];
         }
         if(kDown & (KEY_DOWN)) //Detects if the DOWN D-PAD button was pressed.
         {
@@ -375,6 +376,7 @@ int main ()
                 }
                 else { break; }
             }
+            if(bufs[offs] < minValue[offs] || bufs[offs] >= maxValue[offs]) bufs[offs] = maxValue[offs]-1;
         }
         if(kDown & KEY_LEFT) //Detects if the left button was pressed.
         {
