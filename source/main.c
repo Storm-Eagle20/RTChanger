@@ -212,31 +212,169 @@ int main ()
         
         if(kDown & (KEY_UP))          //Detects if the UP D-PAD button was pressed.
         {
-            for(int current = offs; current < YEAR_OFFSET; ++current)
+            if(bufs[SECONDS_OFFSET] == 59 && bufs[MINUTES_OFFSET] == 59 //Loop maximum possible time to minimum possible time.
+&& bufs[HOURS_OFFSET] == 23 && bufs[DAY_OFFSET] == 31 && bufs[MONTH_OFFSET] == 12 && bufs[YEAR_OFFSET] == 50)
+            {
+                bufs[SECONDS_OFFSET] = 0;
+                bufs[MINUTES_OFFSET] = 0;
+                bufs[HOURS_OFFSET] = 0;
+                bufs[DAY_OFFSET] = 1;
+                bufs[MONTH_OFFSET] = 1;
+                bufs[YEAR_OFFSET] = 0;
+            }
+            if(bufs[MINUTES_OFFSET] == 59 && bufs[HOURS_OFFSET] == 23 //Repeating similar sections of code to prevent crashes. Just ignore this. :)
+&& bufs[DAY_OFFSET] == 31 && bufs[MONTH_OFFSET] == 12 && bufs[YEAR_OFFSET] == 50)
+            {
+                bufs[MINUTES_OFFSET] = 0;
+                bufs[HOURS_OFFSET] = 0;
+                bufs[DAY_OFFSET] = 1;
+                bufs[MONTH_OFFSET] = 1;
+                bufs[YEAR_OFFSET] = 0;
+            }
+            if(bufs[HOURS_OFFSET] == 23 && bufs[DAY_OFFSET] == 31
+&& bufs[MONTH_OFFSET] == 12 && bufs[YEAR_OFFSET] == 50)
+            {
+                bufs[HOURS_OFFSET] = 0;
+                bufs[DAY_OFFSET] = 1;
+                bufs[MONTH_OFFSET] = 1;
+                bufs[YEAR_OFFSET] = 0;
+            }
+            if(bufs[DAY_OFFSET] == 31 && bufs[MONTH_OFFSET] == 12 && bufs[YEAR_OFFSET] == 50)
+            {
+                bufs[DAY_OFFSET] = 1;
+                bufs[MONTH_OFFSET] = 1;
+                bufs[YEAR_OFFSET] = 0;
+            }
+            if(bufs[MONTH_OFFSET] == 12 && bufs[YEAR_OFFSET] == 50)
+            {
+                bufs[MONTH_OFFSET] = 1;
+                bufs[YEAR_OFFSET] = 0;
+            }
+            if(bufs[YEAR_OFFSET] == 50)
+            {
+                bufs[YEAR_OFFSET] == 0;
+            }
+            for(int current = offs; current <= YEAR_OFFSET; ++current) //Increase minute by 1 if going above 59 seconds, etc.
             {
                 if(current == UNUSED_OFFSET) continue;
-                bufs[offs]++;
+                if(current == HOURS_OFFSET)
+                {
+                    if(bufs[MONTH_OFFSET] == 4 || bufs[MONTH_OFFSET] == 6 || bufs[MONTH_OFFSET] == 9 || bufs[MONTH_OFFSET] == 11)
+                    {
+                        if(bufs[DAY_OFFSET] == 30) //Properly loop 30 day months.
+                        {
+                            if(bufs[HOURS_OFFSET] == 23)
+                            {
+                                bufs[DAY_OFFSET] = 1;
+                            }
+                        }
+                    }
+                    else if(bufs[MONTH_OFFSET] == 2) //Properly loop February even in a leap year.
+                    {
+                        if(bufs[DAY_OFFSET] == 28)
+                        {
+                            if(bufs[HOURS_OFFSET] == 23)
+                            {
+                                if(bufs[YEAR_OFFSET] % 400 == 0 && bufs[YEAR_OFFSET] % 100 == 0 && bufs[YEAR_OFFSET] % 4 == 0)
+                                {
+                                    bufs[DAY_OFFSET] = 29;
+                                }
+                                else bufs[DAY_OFFSET] = 1;
+                            }
+                        }
+                    }
+                    bufs[current]++;
+                }
+                else bufs[current]++;
                 if(bufs[current] == maxValue[current])
                 {
                     bufs[current] = minValue[current];
                 }
                 else{ break; }
             }
-            if(bufs[offs] == maxValue[offs]) bufs[offs] = minValue[offs];
         }
         if(kDown & (KEY_DOWN)) //Detects if the DOWN D-PAD button was pressed.
         {
-            for(int current = offs; current < YEAR_OFFSET; --current)
+            if(bufs[SECONDS_OFFSET] == 0 && bufs[MINUTES_OFFSET] == 0 //Loop minimum possible time to maximum possible time.
+&& bufs[HOURS_OFFSET] == 0 && bufs[DAY_OFFSET] == 1 && bufs[MONTH_OFFSET] == 1 && bufs[YEAR_OFFSET] == 0)
+            {
+                bufs[SECONDS_OFFSET] = 59;
+                bufs[MINUTES_OFFSET] = 59;
+                bufs[HOURS_OFFSET] = 23;
+                bufs[DAY_OFFSET] = 31;
+                bufs[MONTH_OFFSET] = 12;
+                bufs[YEAR_OFFSET] = 50;
+            }
+            if(bufs[MINUTES_OFFSET] == 0 && bufs[HOURS_OFFSET] == 0 //Repeating similar sections of code to prevent crashes. Just ignore this. :)
+&& bufs[DAY_OFFSET] == 1 && bufs[MONTH_OFFSET] == 1 && bufs[YEAR_OFFSET] == 0)
+            {
+                bufs[MINUTES_OFFSET] = 59;
+                bufs[HOURS_OFFSET] = 23;
+                bufs[DAY_OFFSET] = 31;
+                bufs[MONTH_OFFSET] = 12;
+                bufs[YEAR_OFFSET] = 50;
+            }
+            if(bufs[HOURS_OFFSET] == 0 && bufs[DAY_OFFSET] == 1
+&& bufs[MONTH_OFFSET] == 1 && bufs[YEAR_OFFSET] == 0)
+            {
+                bufs[HOURS_OFFSET] = 23;
+                bufs[DAY_OFFSET] = 31;
+                bufs[MONTH_OFFSET] = 12;
+                bufs[YEAR_OFFSET] = 50;
+            }
+            if(bufs[DAY_OFFSET] == 1 && bufs[MONTH_OFFSET] == 1 && bufs[YEAR_OFFSET] == 0)
+            {
+                bufs[DAY_OFFSET] = 31;
+                bufs[MONTH_OFFSET] = 12;
+                bufs[YEAR_OFFSET] = 50;
+            }
+            if(bufs[MONTH_OFFSET] == 1 && bufs[YEAR_OFFSET] == 0)
+            {
+                bufs[MONTH_OFFSET] = 12;
+                bufs[YEAR_OFFSET] = 50;
+            }
+            if(bufs[YEAR_OFFSET] == 0)
+            {
+                bufs[YEAR_OFFSET] = 50;
+            }
+            for(int current = offs; current >= SECONDS_OFFSET; ++current) //Decrease minute by 1 if going below 0 seconds, etc.
             {
                 if(current == UNUSED_OFFSET) continue;
-                bufs[offs]--;
-                if (bufs[offs] < minValue[offs] || bufs[offs] >= maxValue[offs])
+                if(current == HOURS_OFFSET)
                 {
-                    bufs[current] = maxValue[offs] - 1;
+                    if(bufs[MONTH_OFFSET] == 4 || bufs[MONTH_OFFSET] == 6 || bufs[MONTH_OFFSET] == 9 || bufs[MONTH_OFFSET] == 11)
+                    {
+                        if(bufs[DAY_OFFSET] == 1) //Properly loop 30 day months.
+                        {
+                            if(bufs[HOURS_OFFSET] == 0)
+                            {
+                                bufs[DAY_OFFSET] = 30;
+                            }
+                        }
+                    }
+                    else if(bufs[MONTH_OFFSET] == 2) //Properly loop February even in a leap year.
+                    {
+                        if(bufs[DAY_OFFSET] == 1)
+                        {
+                            if(bufs[HOURS_OFFSET] == 0)
+                            {
+                                if(bufs[YEAR_OFFSET] % 400 == 0 && bufs[YEAR_OFFSET] % 100 == 0 && bufs[YEAR_OFFSET] % 4 == 0)
+                                {
+                                    bufs[DAY_OFFSET] = 29;
+                                }
+                                else bufs[DAY_OFFSET] = 28;
+                            }
+                        }
+                    }
+                    bufs[current]--;
                 }
-                else{ break; }
+                else bufs[current]--;
+                if(bufs[current] < minValue[current] || bufs[current] >= maxValue[current])
+                {
+                    bufs[current] = maxValue[current] - 1;
+                }
+                else { break; }
             }
-            if(bufs[offs] < minValue[offs] || bufs[offs] >= maxValue[offs]) bufs[offs] = maxValue[offs]-1;
         }
         if(kDown & KEY_LEFT) //Detects if the left button was pressed.
         {
