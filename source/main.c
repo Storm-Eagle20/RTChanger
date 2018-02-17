@@ -212,12 +212,30 @@ int main ()
         
         if(kDown & (KEY_UP))          //Detects if the UP D-PAD button was pressed.
         {
-            bufs[offs]++;
+            for(int current = offs; current < YEAR_OFFSET; ++current)
+            {
+                if(current == UNUSED_OFFSET) continue;
+                bufs[offs]++;
+                if(bufs[current] == maxValue[current])
+                {
+                    bufs[current] = minValue[current];
+                }
+                else{ break; }
+            }
             if(bufs[offs] == maxValue[offs]) bufs[offs] = minValue[offs];
         }
         if(kDown & (KEY_DOWN)) //Detects if the DOWN D-PAD button was pressed.
         {
-            bufs[offs]--;
+            for(int current = offs; current < YEAR_OFFSET; --current)
+            {
+                if(current == UNUSED_OFFSET) continue;
+                bufs[offs]--;
+                if (bufs[offs] < minValue[offs] || bufs[offs] >= maxValue[offs])
+                {
+                    bufs[current] = maxValue[offs] - 1;
+                }
+                else{ break; }
+            }
             if(bufs[offs] < minValue[offs] || bufs[offs] >= maxValue[offs]) bufs[offs] = maxValue[offs]-1;
         }
         if(kDown & KEY_LEFT) //Detects if the left button was pressed.
